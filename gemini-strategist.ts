@@ -399,6 +399,8 @@ function computeQuantitativeFallback(
     scarcityTownFeeBoost,
     directOfferDiscount,
     targetOnTimeBuffer,
+    pricerOptions: current.pricerOptions,
+    chainingOptions: current.chainingOptions,
     reasoningSummary: adjustments.join(" "),
   }
 
@@ -515,6 +517,8 @@ Return the updated strategy parameters in the required JSON schema.`
       scarcityTownFeeBoost: clamp(parsed.scarcityTownFeeBoost, 0.05, 0.35),
       directOfferDiscount: clamp(parsed.directOfferDiscount, 0.88, 1.05),
       targetOnTimeBuffer: clamp(parsed.targetOnTimeBuffer, 0.92, 0.97),
+      pricerOptions: current.pricerOptions,
+      chainingOptions: current.chainingOptions,
       reasoningSummary: parsed.analysis || `Tuned by ${usedModel} Structured Outputs.`,
     }
 

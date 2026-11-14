@@ -519,3 +519,262 @@ export function shouldAllowSmartDirectOffer(params: {
   const minFeeCents = Math.max(offerFeeCents, Math.round(ref * floorMult))
   return { allow: true, minFeeCents }
 }
+
+// =============================================================================
+// 5. DUAL-REGIME INTRA-WEEK SLA CONTROLLER & TOWN CLEARING TRACKER
+// =============================================================================
+
+export type SlaRegime = "FORTRESS" | "BALANCED" | "HARVEST"
+
+export interface SlaOrderLike {
+  id: string
+  status: string
+  option?: string
+  deadline: number
+  lastPickupAt: number
+  deliveredAt: (number | null)[]
+  legs: { pickup: { placeId: string }; delivery: { placeId: string } }[]
+}
+
+export interface SlaRegimeState {
+  regime: SlaRegime
+  projectedEowOT: number
+  liveOT: number
+  totalCommittedOrders: number
+  activeCommittedCount: number
+  atRiskCount: number
+  unbookedCount: number
+  backlogPerDriver: number
+  effectiveMaxWaitingPerDriver: number
+  quoteMultiplierFactor: number
+  targetWinRateDelta: number
+  chainableBaseQuoteFactor: number
+  atRiskUnbookedOrderIds: string[]
+}
+
+/**
+ * Computes real-time intra-week SLA regime (FORTRESS / BALANCED / HARVEST) from
+ * Projected_EOW_OT = (Delivered_OnTime + Active_Safe_Orders) / Total_Committed_Orders
+ * and unbooked driver backlog, preventing late-week/Monday-2 OT crashes while
+ * harvesting flexible volume when SLA buffer is healthy.
+ */
+export function evaluateIntraWeekSlaRegime(params: {
+  now: number
+  onTimeDeliveries: number
+  lateDeliveries: number
+  orders: Iterable<SlaOrderLike>
+  hasBookedOrWorkingGig: (orderId: string) => boolean
+  localDriversFn: (placeId: string) => number
+  totalDrivers: number
+  baseMaxWaitingPerDriver: number
+  urgentOrderIds: Set<string>
+}): SlaRegimeState {
+  const {
+    now,
+    onTimeDeliveries,
+    lateDeliveries,
+    orders,
+    hasBookedOrWorkingGig,
+    localDriversFn,
+    totalDrivers,
+    baseMaxWaitingPerDriver,
+    urgentOrderIds,
+  } = params
+
+  const DAY_MIN = 24 * 60
+  const HOUR_MIN = 60
+  const day = Math.floor(now / DAY_MIN)
+  const tod = ((now % DAY_MIN) + DAY_MIN) % DAY_MIN
+
+  let activeCommittedCount = 0
+  let atRiskCount = 0
+  let unbookedCount = 0
+  const atRiskUnbookedOrderIds: string[] = []
+  const unbookedPerTown = new Map<string, number>()
+
+  for (const o of orders) {
+    if (o.status === "cancelled") continue
+    const allDelivered = o.deliveredAt.length > 0 && o.deliveredAt.every((t) => t !== null)
+    if (allDelivered) continue
+
+    activeCommittedCount++
+    const bookedOrWorking = hasBookedOrWorkingGig(o.id)
+    if (!bookedOrWorking) {
+      unbookedCount++
+      const pTown = o.legs[0]?.pickup.placeId
+      if (pTown) unbookedPerTown.set(pTown, (unbookedPerTown.get(pTown) ?? 0) + 1)
+    }
+
+    const pickupSlack = o.lastPickupAt - now
+    const deadlineSlack = o.deadline - now
+    const pTown = o.legs[0]?.pickup.placeId
+    const localDrv = pTown ? localDriversFn(pTown) : 3
+    const overdue = pickupSlack < 0 || deadlineSlack < 0
+    // Only count genuinely endangered orders so normal active pickups never trigger false panic
+    const isAtRisk =
+      overdue ||
+      (!bookedOrWorking && pickupSlack < 3 * HOUR_MIN) ||
+      deadlineSlack < 4.5 * HOUR_MIN ||
+      (day >= 4 && !bookedOrWorking && pickupSlack < 6 * HOUR_MIN && localDrv <= 1)
+
+    if (isAtRisk) {
+      atRiskCount++
+      if (!bookedOrWorking && (overdue || pickupSlack < 2.5 * HOUR_MIN || deadlineSlack < 4.5 * HOUR_MIN)) {
+        atRiskUnbookedOrderIds.push(o.id)
+      }
+    }
+  }
+
+  // Realistic ~1.5% friction reserve across currently active orders
+  const expectedDropReserve = Math.round(activeCommittedCount * 0.015)
+  const activeSafeOrders = Math.max(0, activeCommittedCount - atRiskCount - expectedDropReserve)
+  const totalDelivered = onTimeDeliveries + lateDeliveries
+  const totalCommittedOrders = totalDelivered + activeCommittedCount
+  const liveOT = totalDelivered >= 10 ? onTimeDeliveries / totalDelivered : 1.0
+  const projectedEowOT =
+    totalCommittedOrders >= 25 ? (onTimeDeliveries + activeSafeOrders) / totalCommittedOrders : 1.0
+
+  const driverCount = Math.max(1, totalDrivers)
+  const backlogPerDriver = unbookedCount / driverCount
+  const urgentRatio = urgentOrderIds.size / driverCount
+
+  let severeTownBacklogSpike = false
+  for (const [town, cnt] of unbookedPerTown.entries()) {
+    const ld = Math.max(0, localDriversFn(town))
+    if (cnt >= Math.max(6, ld * 3 + 3)) {
+      severeTownBacklogSpike = true
+      break
+    }
+  }
+
+  let regime: SlaRegime = "BALANCED"
+  if (
+    totalCommittedOrders >= 30 &&
+    (projectedEowOT < 0.925 ||
+      liveOT < 0.925 ||
+      (severeTownBacklogSpike && projectedEowOT < 0.932))
+  ) {
+    regime = "FORTRESS"
+  } else if (
+    day >= 2 &&
+    totalCommittedOrders >= 65 &&
+    projectedEowOT >= 0.942 &&
+    liveOT >= 0.945 &&
+    backlogPerDriver <= 0.2 &&
+    urgentRatio <= 0.035 &&
+    !(day === 4 && tod >= 15 * HOUR_MIN && liveOT < 0.96)
+  ) {
+    regime = "HARVEST"
+  }
+
+  if (regime === "FORTRESS") {
+    return {
+      regime,
+      projectedEowOT,
+      liveOT,
+      totalCommittedOrders,
+      activeCommittedCount,
+      atRiskCount,
+      unbookedCount,
+      backlogPerDriver,
+      effectiveMaxWaitingPerDriver: Math.min(baseMaxWaitingPerDriver, 0.28),
+      quoteMultiplierFactor: 1.08,
+      targetWinRateDelta: -0.04,
+      chainableBaseQuoteFactor: 1.04,
+      atRiskUnbookedOrderIds,
+    }
+  }
+
+  if (regime === "HARVEST") {
+    return {
+      regime,
+      projectedEowOT,
+      liveOT,
+      totalCommittedOrders,
+      activeCommittedCount,
+      atRiskCount,
+      unbookedCount,
+      backlogPerDriver,
+      effectiveMaxWaitingPerDriver: Math.max(baseMaxWaitingPerDriver, 0.48),
+      quoteMultiplierFactor: liveOT >= 0.958 ? 0.965 : 0.98,
+      targetWinRateDelta: 0.04,
+      chainableBaseQuoteFactor: 0.975,
+      atRiskUnbookedOrderIds,
+    }
+  }
+
+  return {
+    regime,
+    projectedEowOT,
+    liveOT,
+    totalCommittedOrders,
+    activeCommittedCount,
+    atRiskCount,
+    unbookedCount,
+    backlogPerDriver,
+    effectiveMaxWaitingPerDriver: baseMaxWaitingPerDriver,
+    quoteMultiplierFactor: 1.0,
+    targetWinRateDelta: 0.0,
+    chainableBaseQuoteFactor: 1.0,
+    atRiskUnbookedOrderIds,
+  }
+}
+
+/**
+ * Tracks empirical per-town clearing fee ratio (bookedFee / referenceFeeCents) via EMA
+ * so direct offers and fee schedules match each town's true driver reservation threshold
+ * without blind overpaying or chronic expiry.
+ */
+export class TownClearingTracker {
+  private readonly ratioEma = new Map<string, { mean: number; count: number }>()
+  private globalMean = 1.06
+  private globalCount = 0
+
+  recordBooking(placeId: string, bookedFeeCents: number, referenceFeeCents: number): void {
+    if (referenceFeeCents <= 0 || bookedFeeCents <= 0) return
+    const ratio = Math.max(0.78, Math.min(2.2, bookedFeeCents / referenceFeeCents))
+    this.globalCount++
+    const gAlpha = this.globalCount < 10 ? 1 / this.globalCount : 0.08
+    this.globalMean = this.globalMean * (1 - gAlpha) + ratio * gAlpha
+
+    const cur = this.ratioEma.get(placeId)
+    if (!cur) {
+      this.ratioEma.set(placeId, { mean: ratio, count: 1 })
+    } else {
+      const nextCount = cur.count + 1
+      const alpha = nextCount < 5 ? 1 / nextCount : 0.25
+      cur.mean = cur.mean * (1 - alpha) + ratio * alpha
+      cur.count = nextCount
+    }
+  }
+
+  getTownClearingRatio(placeId: string): number {
+    const cur = this.ratioEma.get(placeId)
+    if (!cur) return this.globalMean
+    const weight = Math.min(1, cur.count / 6)
+    return this.globalMean * (1 - weight) + cur.mean * weight
+  }
+}
+
+/**
+ * Combines offline-learned dealer shadow offset (clamped for safety) with regional outage
+ * / driver-drought surge pricing (+25%..+30%).
+ */
+export function computeShadowAndOutageQuoteFactor(params: {
+  dealerAdjustmentOffset: number
+  townOutageStreak: number
+  localDrivers: number
+  unbookedInTown: number
+  regime: SlaRegime
+}): number {
+  const { dealerAdjustmentOffset, townOutageStreak, localDrivers, regime } = params
+
+  // Positive-only calibrated dealer shadow prior: capture high-WTP / outage surge upside
+  // without underpricing competitive lanes.
+  const clampedDealerOffset = Math.max(0, Math.min(0.08, dealerAdjustmentOffset))
+  let factor = 1 + clampedDealerOffset
+  if (townOutageStreak >= 4) {
+    factor *= 1.05
+  }
+  return factor
+}

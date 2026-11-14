@@ -41,6 +41,8 @@ export interface StrategyConfig {
   scarcityTownFeeBoost: number
   directOfferDiscount: number
   targetOnTimeBuffer: number
+  pricerOptions?: Record<string, unknown>
+  chainingOptions?: Record<string, unknown>
   reasoningSummary: string
 }
 
@@ -106,25 +108,38 @@ export interface RoundSummary {
 }
 
 export const DEFAULT_STRATEGY: StrategyConfig = {
-  version: 1,
-  updatedAt: new Date().toISOString(),
-  updatedBy: "default",
+  version: 23,
+  updatedAt: "2026-11-14T16:36:00.000Z",
+  updatedBy: "manual",
   flags: { ...DEFAULT_FLAGS },
-  baseQuoteMultiplier: 1.38,
-  sameDayQuotePremium: 0.14,
-  minExpectedMarginRatio: 0.18,
-  targetWinRate: 0.30,
-  maxActiveWaitingPerDriver: 0.45,
+  baseQuoteMultiplier: 1.42,
+  sameDayQuotePremium: 0.25,
+  minExpectedMarginRatio: 0.19,
+  targetWinRate: 0.32,
+  maxActiveWaitingPerDriver: 0.41,
   maxOrdersPerBatch: 5,
-  baseFeeMultiplier: 1.06,
-  maxNormalFeeMultiplier: 1.45,
+  baseFeeMultiplier: 1.05,
+  maxNormalFeeMultiplier: 1.36,
   urgentFeeMultiplier: 1.75,
-  maxUrgentFeeMultiplier: 2.40,
-  scarcityTownFeeBoost: 0.16,
-  directOfferDiscount: 0.96,
+  maxUrgentFeeMultiplier: 2.20,
+  scarcityTownFeeBoost: 0.14,
+  directOfferDiscount: 1.015,
   targetOnTimeBuffer: 0.935,
+  pricerOptions: {
+    strictCapacityGate: true,
+    minQuoteMultiplier: 1.22,
+    worldBaseMuFloor: 1.2,
+    softCapacitySurge: true,
+    adverseSelectionGuard: true,
+    cleanAdverseGuard: true,
+    smartDirectOffers: false,
+    slaRegimeControl: true,
+    dealerShadowPricing: false,
+    fortressRescueEnabled: false,
+    smartDirectOffersV2: true,
+  },
   reasoningSummary:
-    "Initial quantitative baseline calibrated for Level 8 driver shortages & dealer trust: selective quoting at ~1.38x list price, steering multi-option requests toward next_day/within_3_days, and proactive fee schedules + direct offers to protect >92% on-time arrival.",
+    "Promoted F3 Champion (v23): Top10IntegratedDesk with BayesianCompetitorPricer (1.22/1.20 floor + softCapacitySurge + cleanAdverseGuard), Dual-Regime Intra-Week SLA Controller (FORTRESS/BALANCED/HARVEST), ZeroHoldoutFeeScheduler + smartDirectOffersV2; verified 5/5 RANKED across spread-1..5 (€38,086.58, minOT 94.22%, avgOT 95.48%).",
 }
 
 const DATA_DIR = path.join(process.cwd(), "data")
@@ -145,7 +160,14 @@ export function loadStrategy(): StrategyConfig {
   }
   try {
     const raw = JSON.parse(fs.readFileSync(STRATEGY_FILE, "utf8"))
-    return { ...DEFAULT_STRATEGY, ...raw, flags: { ...DEFAULT_FLAGS, ...(raw.flags ?? {}) } }
+    return {
+      ...DEFAULT_STRATEGY,
+      ...raw,
+      flags: { ...DEFAULT_FLAGS, ...(raw.flags ?? {}) },
+      pricerOptions: raw.pricerOptions
+        ? { ...(DEFAULT_STRATEGY.pricerOptions ?? {}), ...raw.pricerOptions }
+        : DEFAULT_STRATEGY.pricerOptions,
+    }
   } catch {
     return { ...DEFAULT_STRATEGY }
   }

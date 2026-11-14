@@ -24,7 +24,16 @@ import {
   hardenOutboxPostActions,
   resolveOrderActivePeakFee,
   shouldAllowSmartDirectOffer,
+  evaluateIntraWeekSlaRegime,
+  TownClearingTracker,
+  computeShadowAndOutageQuoteFactor,
+  type SlaRegimeState,
 } from "./top10-upgrades.ts"
+import {
+  loadDealerProfiles,
+  getDealerQuoteAdjustment,
+  type DealerProfilePayload,
+} from "./dealer-shadow-profiler.ts"
 
 export const MINUTE = 1
 export const HOUR = 60
@@ -113,6 +122,10 @@ export interface Top10PricerConfig {
   patientMorningHoldout?: boolean
   cleanAdverseGuard?: boolean
   balancedBayesianDrift?: boolean
+  slaRegimeControl?: boolean
+  dealerShadowPricing?: boolean
+  fortressRescueEnabled?: boolean
+  smartDirectOffersV2?: boolean
 }
 
 export const DEFAULT_TOP10_CONFIG: Top10PricerConfig = {
@@ -149,6 +162,10 @@ export const DEFAULT_TOP10_CONFIG: Top10PricerConfig = {
   patientMorningHoldout: false,
   cleanAdverseGuard: false,
   balancedBayesianDrift: false,
+  slaRegimeControl: false,
+  dealerShadowPricing: false,
+  fortressRescueEnabled: false,
+  smartDirectOffersV2: false,
 }
 
 export interface NoteFlags {
@@ -1091,7 +1108,14 @@ export class ZeroHoldoutFeeScheduler {
    * Selects direct offer targets prioritizing genuinely idle drivers who delivered near pickup
    * (especially drivers >30 km from home who receive NO app notifications), at strictly >1.02x board fee.
    */
-  selectDirectOfferCandidates(ctx: DirectOfferContext): DirectOfferCandidate[] {
+  selectDirectOfferCandidates(
+    ctx: DirectOfferContext & {
+      townClearingMultiplier?: number
+      gigPostedAt?: number
+      localDriverCount?: number
+      busyDriverIds?: Set<string>
+    },
+  ): DirectOfferCandidate[] {
     if (this.config.level < 3) return []
     const minuteOfDay = ctx.now % DAY
     // Respect 23:00-07:00 driver sleep curfew (RULES.md: Direct offers)
@@ -1112,17 +1136,24 @@ export class ZeroHoldoutFeeScheduler {
       if (step.at <= ctx.now) currentBoardFee = step.feeCents
     }
     const minRef = Math.round((ctx.referenceFeeCents * ctx.carsInGig) / Math.max(1, ctx.order.legs.length))
-    // Strictly > 1.02x current fee for non-urgent; 1.12x for urgent
-    const offerMultiplier = ctx.isUrgent ? 1.12 : Math.max(1.025, this.config.directOfferMultiplier)
-    const offerFeeCents = Math.max(100, minRef, Math.round(currentBoardFee * offerMultiplier))
+    const baseMult = ctx.isUrgent ? 1.12 : Math.max(1.025, this.config.directOfferMultiplier)
+    const townClearing = Math.max(1.05, Math.min(1.24, ctx.townClearingMultiplier ?? 1.10))
+    const gigAge = ctx.gigPostedAt !== undefined ? Math.max(0, ctx.now - ctx.gigPostedAt) : 60
+    const isNonUrgentEarly = !ctx.isUrgent && gigAge < 60
 
     const seen = new Set<string>()
     const scored: DirectOfferCandidate[] = []
 
-    const tryAdd = (driverId: string, tier: DirectOfferCandidate["tier"], basePriority: number) => {
+    const tryAdd = (
+      driverId: string,
+      tier: DirectOfferCandidate["tier"],
+      basePriority: number,
+      allowIdleToday = false,
+    ) => {
       if (seen.has(driverId)) return
       seen.add(driverId)
 
+      if (ctx.busyDriverIds?.has(driverId)) return
       if (ctx.offeredPairs.has(`${ctx.gigId}:${driverId}`)) return
       if ((ctx.driverOffersToday.get(`${day}:${driverId}`) ?? 0) >= 3) return
 
@@ -1131,21 +1162,52 @@ export class ZeroHoldoutFeeScheduler {
       if (ctx.audience.experienced && (profile.rating < 4.8 || profile.completedGigs < 50)) return
       if (ctx.audience.manualLicence && profile.licence !== "manual") return
 
+      const recentlyDelivered = ctx.driverLastDelivery.has(driverId)
+      // Exclude dormant drivers who rarely book gigs (main cause of expired offer quota burn)
+      if (!recentlyDelivered && profile.completedGigs < 20) return
+      if (!allowIdleToday && !ctx.isUrgent && profile.completedGigs < 25) return
+
       const homePlace = ctx.placesById.get(profile.homePlaceId)
-      const homewardBonus = homePlace && deliveryPlace && haversineKm(homePlace, deliveryPlace) <= 40 ? 45 : 0
+      const isHomeward = Boolean(homePlace && deliveryPlace && haversineKm(homePlace, deliveryPlace) <= 45)
+      const homewardBonus = isHomeward ? 55 : 0
       const ratingBonus = profile.rating >= 4.8 ? 10 : 0
+      const expBonus = Math.min(30, Math.floor(profile.completedGigs / 25) * 6)
+
+      // Allow non-urgent direct offers to homeward drivers, active viewers when gig is stalled (>=30m),
+      // or idle drivers who just delivered at pickup. Never blast cold local non-viewers early.
+      if (!ctx.isUrgent && tier === "local" && !isHomeward) return
+      if (!ctx.isUrgent && tier === "viewer" && !isHomeward && gigAge < 30) return
+      if (!ctx.isUrgent && tier === "idle_at_pickup" && gigAge < 30 && !isHomeward) {
+        const stranded = homePlace ? haversineKm(homePlace, pickupPlace) > 30 : false
+        if (!stranded) return
+      }
+
+      let feeFloorMult = townClearing
+      if (ctx.isUrgent) {
+        feeFloorMult = Math.max(1.20, townClearing + 0.12)
+      } else if (isHomeward) {
+        feeFloorMult = Math.max(1.06, Math.min(1.14, townClearing + 0.02))
+      } else if (tier === "idle_at_pickup") {
+        feeFloorMult = Math.max(1.12, Math.min(1.24, townClearing + 0.06))
+      } else {
+        feeFloorMult = Math.max(1.14, townClearing + 0.06)
+      }
+
+      const targetRefFee = Math.round(minRef * feeFloorMult)
+      const boardBeatFee = Math.round(currentBoardFee * (ctx.isUrgent ? 1.18 : Math.max(1.11, baseMult)))
+      const offerFeeCents = Math.max(100, boardBeatFee, targetRefFee)
 
       scored.push({
         driverId,
         feeCents: offerFeeCents,
-        priority: basePriority + homewardBonus + ratingBonus,
+        priority: basePriority + homewardBonus + ratingBonus + expBonus,
         tier,
       })
     }
 
-    // Tier 1: Genuinely idle drivers who finished a delivery within 35 km today (last 12h)
+    // Tier 1: Genuinely idle drivers who finished a delivery within 35 km recently (last 2.5h)
     for (const [driverId, lastDeliv] of ctx.driverLastDelivery.entries()) {
-      if (ctx.now - lastDeliv.at > 12 * HOUR) continue
+      if (ctx.now - lastDeliv.at > 2.5 * HOUR) continue
       const lastPlace = ctx.placesById.get(lastDeliv.placeId)
       if (!lastPlace) continue
       const distKm = haversineKm(lastPlace, pickupPlace)
@@ -1155,27 +1217,28 @@ export class ZeroHoldoutFeeScheduler {
       const homePlace = profile ? ctx.placesById.get(profile.homePlaceId) : undefined
       // Drivers >30 km from home never receive push notifications for this gig!
       const strandedAway = homePlace ? haversineKm(homePlace, pickupPlace) > 30 : false
-      const tierScore = (strandedAway ? 300 : 200) - distKm
-      tryAdd(driverId, "idle_at_pickup", tierScore)
+      const tierScore = (strandedAway ? 320 : 210) - distKm
+      tryAdd(driverId, "idle_at_pickup", tierScore, true)
     }
 
-    // Tier 2: Active gig viewers
+    // Tier 2: Active gig viewers (only reached if urgent or stalled >=60m or homeward)
     for (const dId of ctx.gigViewers) {
-      tryAdd(dId, "viewer", 120)
+      tryAdd(dId, "viewer", 130)
     }
 
-    // Tier 3: Local drivers near pickup
+    // Tier 3: Local drivers near pickup (only reached if urgent or stalled >=60m or homeward)
     for (const d of ctx.driversNearPickup) {
       tryAdd(d.id, "local", 80)
     }
 
     // Tier 4: En-route repositioned drivers
     for (const dId of ctx.repositionedEnRoute) {
-      tryAdd(dId, "en_route", 50)
+      tryAdd(dId, "en_route", 70, true)
     }
 
     scored.sort((a, b) => b.priority - a.priority)
-    const slotsAvailable = Math.max(0, 3 - ctx.openOffersOnGig)
+    const maxSlotsThisCall = isNonUrgentEarly ? 2 : 3
+    const slotsAvailable = Math.max(0, maxSlotsThisCall - ctx.openOffersOnGig)
     return scored.slice(0, slotsAvailable)
   }
 }
@@ -1188,14 +1251,14 @@ export class ZeroHoldoutFeeScheduler {
 
 export interface ChainingConfig {
   enabled: boolean
-  maxOrdersPerChain: 2 | 3
+  maxOrdersPerChain: 2 | 3 | 4 | 5
   maxGapMinutes: number // max empty-mile drive between car i delivery and car i+1 pickup (default 45)
   maxTotalDriveMinutes: number // RULES.md:68 hard cap is 720 (12h)
   minOrderSlackMinutes: number // min time before lastPickupAt to enter a chain (default 10h)
   bookingBufferMinutes: number // ensure gig stays feasible even if booked up to N mins later (default 120)
   consolidationIntervalMinutes: number // periodic sweep cadence (default 45)
-  openFeeMinMult: number // opening fee floor fraction of combined refFee (default 0.78)
-  openFeeMaxMult: number // opening fee ceiling fraction of combined refFee for normal towns (default 0.85)
+  openFeeMinMult: number // opening fee floor fraction of combined refFee (default 0.90)
+  openFeeMaxMult: number // opening fee ceiling fraction of combined refFee for normal towns (default 1.00)
   quoteSynergyEnabled: boolean // discount expectedFeeCents in quote() when partner order exists
   allowChainedCapacityBypass: boolean // allow pairing even when town/waiting cap is near threshold
   scarcityGated?: boolean // dynamically pause new chaining when OT or drop-rate degrades
@@ -1204,7 +1267,7 @@ export interface ChainingConfig {
 
 export const DEFAULT_CHAINING_CONFIG: ChainingConfig = {
   enabled: true,
-  maxOrdersPerChain: 3,
+  maxOrdersPerChain: 5,
   maxGapMinutes: 45,
   maxTotalDriveMinutes: 720,
   minOrderSlackMinutes: 10 * HOUR,
@@ -1821,24 +1884,27 @@ export function findBestChainPlans(
 ): ChainPlan[] {
   const candidates: ChainPlan[] = []
 
-  // 1. Extend existing 2-car open gigs to 3-car chains when a compatible 3rd order exists
+  // 1. Extend existing multi-car open gigs (2 -> 3 -> 4 -> 5 cars) when a compatible order exists
   if (config.maxOrdersPerChain >= 3) {
     for (const multi of openMultiGigs) {
-      if (multi.contexts.length !== 2) continue
-      const [cA, cB] = multi.contexts
+      const m = multi.contexts.length
+      if (m < 2 || m >= config.maxOrdersPerChain) continue
       for (const single of openSingleGigs) {
-        const cC = single.ctx
-        const comboKey = canonicalComboKey([cA!.order.id, cB!.order.id, cC.order.id])
+        const cNew = single.ctx
+        if (multi.contexts.some((c) => c.order.id === cNew.order.id)) continue
+        const comboKey = canonicalComboKey([...multi.contexts.map((c) => c.order.id), cNew.order.id])
         if (rejectedCombos.has(comboKey)) continue
 
-        const perms: ChainOrderContext[][] = [
-          [cA!, cB!, cC],
-          [cA!, cC, cB!],
-          [cC, cA!, cB!],
-          [cB!, cA!, cC],
-          [cB!, cC, cA!],
-          [cC, cB!, cA!],
-        ]
+        const perms: ChainOrderContext[][] = []
+        for (let pos = 0; pos <= m; pos++) {
+          perms.push([...multi.contexts.slice(0, pos), cNew, ...multi.contexts.slice(pos)])
+        }
+        if (m === 2) {
+          const rev = [multi.contexts[1]!, multi.contexts[0]!]
+          for (let pos = 0; pos <= 2; pos++) {
+            perms.push([...rev.slice(0, pos), cNew, ...rev.slice(pos)])
+          }
+        }
         let bestEval: ChainEvaluation | null = null
         for (const perm of perms) {
           const ev = evaluateChainSequence(perm, now, roadMinutesFn, config, snowChecker)
@@ -2236,7 +2302,7 @@ export class Top10ChainingDesk extends QuantitativeDesk {
     return true
   }
 
-  protected isChainingSafeToStartNew(): { safe: boolean; maxCars: 2 | 3; quoteSynergySafe: boolean } {
+  protected isChainingSafeToStartNew(): { safe: boolean; maxCars: 2 | 3 | 4 | 5; quoteSynergySafe: boolean } {
     if (!this.chainConfig.enabled || this.level < 3) {
       return { safe: false, maxCars: 2, quoteSynergySafe: false }
     }
@@ -2248,7 +2314,7 @@ export class Top10ChainingDesk extends QuantitativeDesk {
       }
     }
     const liveOT = this.liveOnTimeRatio()
-    const bookedDenom = Math.max(12, this.telemetry.totalGigsBooked || this.orders.size)
+    const bookedDenom = Math.max(15, this.telemetry.totalGigsBooked || this.orders.size)
     const dropRate = this.telemetry.gigDrops / bookedDenom
     const maxWaitAllowed = Math.max(
       4,
@@ -2260,16 +2326,16 @@ export class Top10ChainingDesk extends QuantitativeDesk {
       this.chainConfig.maxChainStartDay === undefined || curDay <= this.chainConfig.maxChainStartDay
     const safe =
       beforeDayCutoff &&
-      liveOT >= this.strategy.targetOnTimeBuffer &&
-      dropRate <= 0.145 &&
-      waiting < maxWaitAllowed * 0.85
-    const maxCars: 2 | 3 =
-      safe && this.chainConfig.maxOrdersPerChain === 3 && liveOT >= 0.95 && dropRate <= 0.105 ? 3 : 2
+      liveOT >= Math.max(0.95, this.strategy.targetOnTimeBuffer) &&
+      dropRate <= 0.09 &&
+      waiting < maxWaitAllowed * 0.68
+    const maxCars: 2 | 3 | 4 | 5 =
+      safe && liveOT >= 0.958 && dropRate <= 0.075 ? this.chainConfig.maxOrdersPerChain : 2
     const quoteSynergySafe =
       safe &&
       this.chainConfig.quoteSynergyEnabled &&
-      liveOT >= 0.945 &&
-      waiting < maxWaitAllowed * 0.65
+      liveOT >= 0.955 &&
+      waiting < maxWaitAllowed * 0.55
     return { safe, maxCars, quoteSynergySafe }
   }
 
@@ -3094,6 +3160,11 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
   readonly activeRepriceDropFloor = new Map<string, number>()
   readonly peakFeeByKey = new Map<string, number>()
   readonly prevSchedByKey = new Map<string, FeeStep[]>()
+  readonly townClearing = new TownClearingTracker()
+  private readonly dealerProfiles: DealerProfilePayload | null = loadDealerProfiles()
+  private lastSlaState: SlaRegimeState | null = null
+  private lastSlaEvalAt = -999
+  private readonly rescuedAtByOrder = new Map<string, number>()
 
   constructor(
     world: any,
@@ -3116,6 +3187,79 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
     this.feeScheduler = new ZeroHoldoutFeeScheduler(pricerCfg)
   }
 
+  private getSlaRegime(force = false): SlaRegimeState {
+    if (!force && this.lastSlaState && this.now - this.lastSlaEvalAt < 15) {
+      return this.lastSlaState
+    }
+    this.lastSlaEvalAt = this.now
+    this.lastSlaState = evaluateIntraWeekSlaRegime({
+      now: this.now,
+      onTimeDeliveries: this.telemetry.onTimeDeliveries,
+      lateDeliveries: this.telemetry.lateDeliveries,
+      orders: this.orders.values(),
+      hasBookedOrWorkingGig: (orderId) => {
+        const gigs = this.gigsOf(orderId)
+        return gigs.length > 0 && gigs.some((gid) => this.booked.has(gid))
+      },
+      localDriversFn: (placeId) => this.localDriverCount(placeId),
+      totalDrivers: Math.max(1, this.roster.length),
+      baseMaxWaitingPerDriver: this.strategy.maxActiveWaitingPerDriver,
+      urgentOrderIds: this.urgent,
+    })
+    return this.lastSlaState
+  }
+
+  private countUnbookedInTown(placeId: string): number {
+    let count = 0
+    for (const o of this.orders.values()) {
+      if (o.status === "cancelled") continue
+      if (o.deliveredAt.every((t) => t !== null)) continue
+      if (o.legs[0]?.pickup.placeId !== placeId) continue
+      const gigs = this.gigsOf(o.id)
+      if (!gigs.some((gid) => this.booked.has(gid))) count++
+    }
+    return count
+  }
+
+  private async runFortressEmergencyRescue(sla: SlaRegimeState): Promise<void> {
+    if (sla.regime !== "FORTRESS" || sla.atRiskUnbookedOrderIds.length === 0) return
+    let rescuedThisTick = 0
+    for (const orderId of sla.atRiskUnbookedOrderIds) {
+      if (rescuedThisTick >= 4) break
+      const lastRescued = this.rescuedAtByOrder.get(orderId) ?? -9999
+      if (this.now - lastRescued < 90) continue
+      const order = this.orders.get(orderId)
+      if (!order || order.status === "cancelled") continue
+      const gigs = this.gigsOf(orderId)
+      for (const gigId of gigs) {
+        if (this.booked.has(gigId)) continue
+        const postAction = this.posts.get(gigId)
+        if (!postAction || postAction.stops.length > 2) continue
+        const refFee = this.requests.get(orderId)?.referenceFeeCents ?? 3000
+        const maxCapFee = Math.round(refFee * this.strategy.maxUrgentFeeMultiplier)
+        let curFee = postAction.schedule[0]?.feeCents ?? refFee
+        for (const s of postAction.schedule) {
+          if (s.at <= this.now) curFee = s.feeCents
+        }
+        const boostedFee = Math.min(maxCapFee, Math.max(curFee + 200, Math.round(curFee * 1.15)))
+        if (boostedFee <= curFee + 50) continue
+        this.urgent.add(orderId)
+        this.activeRepriceDropFloor.set(orderId, boostedFee)
+        this.outbox.push({ type: "withdraw", gigId })
+        this.removeGigTracking(gigId)
+        const pickupLegs = postAction.stops.filter((s) => s.kind === "pickup").map((s) => s.leg)
+        try {
+          await this.post(order, pickupLegs)
+        } finally {
+          this.activeRepriceDropFloor.delete(orderId)
+        }
+        this.rescuedAtByOrder.set(orderId, this.now)
+        rescuedThisTick++
+        break
+      }
+    }
+  }
+
   override quote(request: PriceRequest): void {
     if (!this.useBayesianPricer || this.level <= 3) {
       super.quote(request)
@@ -3131,9 +3275,29 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
     const pickupPlace = leg0.pickup.placeId
     const deliveryPlace = lastLeg.delivery.placeId
 
+    const useSlaControl = Boolean(this.pricer.config.slaRegimeControl)
+    const useShadow = Boolean(this.pricer.config.dealerShadowPricing)
+    const sla = useSlaControl
+      ? this.getSlaRegime()
+      : {
+          regime: "BALANCED" as const,
+          projectedEowOT: 1,
+          liveOT: 1,
+          totalCommittedOrders: 0,
+          activeCommittedCount: 0,
+          atRiskCount: 0,
+          unbookedCount: 0,
+          backlogPerDriver: 0,
+          effectiveMaxWaitingPerDriver: this.pricer.config.maxActiveWaitingPerDriver,
+          quoteMultiplierFactor: 1,
+          targetWinRateDelta: 0,
+          chainableBaseQuoteFactor: 1,
+          atRiskUnbookedOrderIds: [],
+        }
+
     let chainingDiscountRatio: number | undefined
     const chainSafeGate = this.isChainingSafeToStartNew()
-    if (chainSafeGate.quoteSynergySafe) {
+    if (chainSafeGate.quoteSynergySafe && sla.regime !== "FORTRESS") {
       const openContexts = this.getOpenChainableContextsForQuote()
       const synergy = findQuoteChainSynergy(
         request,
@@ -3149,6 +3313,23 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
         this.lastQuoteSynergy.set(request.id, synergy)
         this.chainStats.quoteSynergyHits++
       }
+    }
+
+    // Apply bounded dealer shadow offset + regional outage surge + SLA regime feedback
+    const isSingleSameDay = request.options.length === 1 && request.options[0]!.kind === "same_day"
+    const pickupDrivers = this.localDriverCount(pickupPlace)
+    let shadowOutageFactor = 1.0
+    if (useShadow) {
+      const dealerAdj = getDealerQuoteAdjustment(request.dealerId, isSingleSameDay, this.dealerProfiles)
+      const townStreak = this.townOutageStreak.get(pickupPlace) ?? 0
+      const unbookedInTown = this.countUnbookedInTown(pickupPlace)
+      shadowOutageFactor = computeShadowAndOutageQuoteFactor({
+        dealerAdjustmentOffset: dealerAdj.quoteOffset,
+        townOutageStreak: townStreak,
+        localDrivers: pickupDrivers,
+        unbookedInTown,
+        regime: sla.regime,
+      })
     }
 
     let activeUnbookedUrgent = 0
@@ -3175,7 +3356,7 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
       activeUnbookedUrgent,
       totalDrivers: Math.max(1, this.roster.length),
       liveOnTimeShare: this.liveOnTimeRatio(),
-      pickupDrivers: this.localDriverCount(pickupPlace),
+      pickupDrivers,
       deliveryDrivers: this.localDriverCount(deliveryPlace),
       repositionedAtPickup: this.repositionedDriverCount(pickupPlace),
       townWinsToday: this.townDayWins.get(townDayKey) ?? 0,
@@ -3188,7 +3369,34 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
       chainingDiscountRatio,
     }
 
-    const decision = this.pricer.evaluateQuote(request, pricingCtx)
+    const origWait = this.pricer.config.maxActiveWaitingPerDriver
+    const origWinRate = this.pricer.config.targetWinRate
+    const origBaseQuote = this.pricer.config.baseQuoteMultiplier
+    const origMinMargin = this.pricer.config.minExpectedMarginRatio
+    let decision: ReturnType<BayesianCompetitorPricer["evaluateQuote"]>
+    try {
+      this.pricer.config.maxActiveWaitingPerDriver = sla.effectiveMaxWaitingPerDriver
+      this.pricer.config.targetWinRate = Math.max(0.2, Math.min(0.45, origWinRate + sla.targetWinRateDelta))
+      const harvestChainFactor = sla.regime === "HARVEST" && chainingDiscountRatio !== undefined
+        ? sla.chainableBaseQuoteFactor
+        : 1.0
+      this.pricer.config.baseQuoteMultiplier = Math.max(
+        1.26,
+        Math.min(2.2, origBaseQuote * harvestChainFactor * shadowOutageFactor * sla.quoteMultiplierFactor),
+      )
+      this.pricer.config.minExpectedMarginRatio =
+        sla.regime === "FORTRESS"
+          ? Math.max(0.21, origMinMargin)
+          : sla.regime === "HARVEST"
+            ? Math.min(origMinMargin, 0.185)
+            : origMinMargin
+      decision = this.pricer.evaluateQuote(request, pricingCtx)
+    } finally {
+      this.pricer.config.maxActiveWaitingPerDriver = origWait
+      this.pricer.config.targetWinRate = origWinRate
+      this.pricer.config.baseQuoteMultiplier = origBaseQuote
+      this.pricer.config.minExpectedMarginRatio = origMinMargin
+    }
     if (decision.action === "decline" || Object.keys(decision.prices).length === 0) {
       const opt = request.options[request.options.length - 1]!
       const declinePrice = Math.max(1000, Math.round(opt.listPriceCents * 4.2))
@@ -3285,16 +3493,52 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
       })
     }
 
-    const schedule = this.feeScheduler.buildSchedule({
-      now: this.now,
-      order,
-      referenceFeeCents: refFeeCents,
-      carsInGig: cars,
-      pickupDrivers: this.localDriverCount(pickupPlace),
-      deliveryDrivers: this.localDriverCount(deliveryPlace),
-      isUrgent,
-      lastBookedFeeCents: effectivePeakFloor,
-    })
+    const sla = this.pricer.config.slaRegimeControl
+      ? this.getSlaRegime()
+      : { regime: "BALANCED" as const, projectedEowOT: 1.0 }
+    const pickupDrivers = this.localDriverCount(pickupPlace)
+    const deliveryDrivers = this.localDriverCount(deliveryPlace)
+    const slack = Math.max(0, order.lastPickupAt - this.now)
+    const tod = ((this.now % DAY) + DAY) % DAY
+    const inMorningRush = tod >= 4 * HOUR + 30 && tod <= 7 * HOUR + 30
+    const isHighSlackFlexible =
+      Boolean(this.pricer.config.slaRegimeControl) &&
+      !isUrgent &&
+      sla.regime !== "FORTRESS" &&
+      (order.option === "next_day" || order.option === "within_3_days") &&
+      slack >= 12 * HOUR &&
+      pickupDrivers >= 3 &&
+      !inMorningRush
+
+    const schedCfg = (this.feeScheduler as any).config as Top10PricerConfig
+    const origBaseFee = schedCfg.baseFeeMultiplier
+    const origMaxNorm = schedCfg.maxNormalFeeMultiplier
+    let schedule: FeeStep[]
+    try {
+      if (sla.regime === "FORTRESS") {
+        schedCfg.baseFeeMultiplier = Math.max(origBaseFee, 1.08)
+        schedCfg.maxNormalFeeMultiplier = Math.max(origMaxNorm, 1.40)
+      } else if (this.pricer.config.slaRegimeControl && sla.projectedEowOT < 0.94) {
+        schedCfg.baseFeeMultiplier = Math.max(origBaseFee, 1.05)
+        schedCfg.maxNormalFeeMultiplier = Math.max(origMaxNorm, 1.36)
+      } else if (isHighSlackFlexible || (this.pricer.config.slaRegimeControl && sla.projectedEowOT >= 0.94 && !isUrgent)) {
+        schedCfg.baseFeeMultiplier = Math.min(origBaseFee, 1.00)
+        schedCfg.maxNormalFeeMultiplier = Math.min(origMaxNorm, 1.30)
+      }
+      schedule = this.feeScheduler.buildSchedule({
+        now: this.now,
+        order,
+        referenceFeeCents: refFeeCents,
+        carsInGig: cars,
+        pickupDrivers,
+        deliveryDrivers,
+        isUrgent,
+        lastBookedFeeCents: effectivePeakFloor,
+      })
+    } finally {
+      schedCfg.baseFeeMultiplier = origBaseFee
+      schedCfg.maxNormalFeeMultiplier = origMaxNorm
+    }
     if (this.pricer.config.repostNoFeeDrop && peakFromKey > 0 && order.deadline - this.now < 4.5 * HOUR) {
       return schedule.map((step) => ({ ...step, feeCents: Math.max(step.feeCents, peakFromKey) }))
     }
@@ -3362,7 +3606,90 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
       return
     }
     await super.handle(event)
+    if (event.kind === "gig_booked") {
+      const orderId = this.gigOrder.get(event.gigId) ?? this.ordersInGig(event.gigId)[0]
+      const order = orderId ? this.orders.get(orderId) : undefined
+      const refFee = orderId ? this.requests.get(orderId)?.referenceFeeCents ?? 0 : 0
+      const pickupPlace = order?.legs[0]?.pickup.placeId
+      if (pickupPlace && refFee > 0 && event.feeCents > 0) {
+        this.townClearing.recordBooking(pickupPlace, event.feeCents, refFee)
+      }
+    }
+    if (this.pricer.config.fortressRescueEnabled) {
+      const sla = this.getSlaRegime()
+      if (sla.regime === "FORTRESS" && this.now - this.lastSlaEvalAt < 5) {
+        const criticalOnly: SlaRegimeState = {
+          ...sla,
+          atRiskUnbookedOrderIds: sla.atRiskUnbookedOrderIds.filter((oid) => {
+            const ord = this.orders.get(oid)
+            return ord ? ord.lastPickupAt - this.now < 90 || ord.deadline - this.now < 180 : false
+          }),
+        }
+        await this.runFortressEmergencyRescue(criticalOnly)
+      }
+    }
     this.applyOutboxUpgrades()
+  }
+
+  override tryDirectOfferToDriver(gigId: string, driverId: string, maxOpenOffers = 3): void {
+    const oIds = this.ordersInGig(gigId)
+    if (oIds.length > 1 || !this.pricer.config.smartDirectOffersV2) {
+      super.tryDirectOfferToDriver(gigId, driverId, maxOpenOffers)
+      return
+    }
+    if (this.level < 3 || !this.strategy.flags.repositionOffers) return
+    const minuteOfDay = this.now % DAY
+    if (minuteOfDay < 7 * HOUR || minuteOfDay >= 22 * HOUR + 45) return
+    if ((this.gigOpenOffers.get(gigId) ?? 0) >= maxOpenOffers) return
+
+    const pairKey = `${gigId}:${driverId}`
+    if (this.offeredPairs.has(pairKey)) return
+
+    const day = Math.floor(this.now / DAY)
+    const driverDayKey = `${day}:${driverId}`
+    const sentToday = this.driverOffersByDay.get(driverDayKey) ?? 0
+    if (sentToday >= 3) return
+
+    // Skip drivers who already have >= 2 active queued/in-flight gigs
+    let activeForDriver = 0
+    for (const [bGigId, bDriverId] of this.gigBookedByDriver.entries()) {
+      if (bDriverId !== driverId) continue
+      const oId = this.gigOrder.get(bGigId)
+      const o = oId ? this.orders.get(oId) : undefined
+      if (o && o.status !== "cancelled" && !o.deliveredAt.every((t) => t !== null)) {
+        activeForDriver++
+        if (activeForDriver >= 2) return
+      }
+    }
+
+    const postAction = this.posts.get(gigId)
+    if (!postAction) return
+    const profile = this.roster.find((d) => d.id === driverId)
+    if (!profile) return
+    if (postAction.audience.experienced && (profile.rating < 4.8 || profile.completedGigs < 50)) return
+    if (postAction.audience.manualLicence && profile.licence !== "manual") return
+    if (profile.completedGigs < 15 && !this.driverLastDelivery.has(driverId)) return
+
+    const orderId = oIds[0]
+    const order = orderId ? this.orders.get(orderId) : undefined
+    const pickupPlace = order?.legs[0]?.pickup.placeId
+    const townClearing = pickupPlace ? this.townClearing.getTownClearingRatio(pickupPlace) : 1.1
+    const isUrgent = Boolean(orderId && this.urgent.has(orderId))
+    const refFee = (orderId ? this.requests.get(orderId)?.referenceFeeCents : undefined) ?? 0
+
+    let currentFee = postAction.schedule[0]!.feeCents
+    for (const step of postAction.schedule) {
+      if (step.at <= this.now) currentFee = step.feeCents
+    }
+    const targetRef = refFee > 0 ? Math.round(refFee * (isUrgent ? Math.max(1.2, townClearing + 0.1) : Math.max(1.08, townClearing + 0.02))) : 100
+    const boardBeat = Math.round(currentFee * (isUrgent ? 1.18 : Math.max(1.11, this.strategy.directOfferDiscount)))
+    const offerFee = Math.max(100, targetRef, boardBeat)
+
+    this.outbox.push({ type: "offer", gigId, driverId, feeCents: offerFee })
+    this.offeredPairs.add(pairKey)
+    this.driverOffersByDay.set(driverDayKey, sentToday + 1)
+    this.gigOpenOffers.set(gigId, (this.gigOpenOffers.get(gigId) ?? 0) + 1)
+    this.telemetry.totalDirectOffers++
   }
 
   override dispatchDirectOffersForGig(gigId: string, order: Order): void {
@@ -3382,6 +3709,17 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
     if (!req) return
 
     const pickupPlace = order.legs[0]!.pickup.placeId
+    const activeCountByDriver = new Map<string, number>()
+    const busyDriverIds = new Set<string>()
+    for (const [bGigId, bDriverId] of this.gigBookedByDriver.entries()) {
+      const oId = this.gigOrder.get(bGigId)
+      const o = oId ? this.orders.get(oId) : undefined
+      if (o && o.status !== "cancelled" && !o.deliveredAt.every((t) => t !== null)) {
+        const nextCount = (activeCountByDriver.get(bDriverId) ?? 0) + 1
+        activeCountByDriver.set(bDriverId, nextCount)
+        if (nextCount >= 2) busyDriverIds.add(bDriverId)
+      }
+    }
     const candidates = this.feeScheduler.selectDirectOfferCandidates({
       now: this.now,
       gigId,
@@ -3400,6 +3738,10 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
       offeredPairs: this.offeredPairs,
       driverOffersToday: this.driverOffersByDay,
       openOffersOnGig: this.gigOpenOffers.get(gigId) ?? 0,
+      townClearingMultiplier: this.townClearing.getTownClearingRatio(pickupPlace),
+      gigPostedAt: postAction.at,
+      localDriverCount: this.localDriverCount(pickupPlace),
+      busyDriverIds,
     })
 
     const day = Math.floor(this.now / DAY)
@@ -3475,15 +3817,21 @@ export function getTop10DeskOptions(strategy: StrategyConfig): IntegratedDeskOpt
     softCapacitySurge?: boolean
     adverseSelectionGuard?: boolean
     smartDirectOffers?: boolean
+    cleanAdverseGuard?: boolean
+    slaRegimeControl?: boolean
+    dealerShadowPricing?: boolean
+    fortressRescueEnabled?: boolean
+    smartDirectOffersV2?: boolean
   }
   const chainingEnabled = Boolean(strategy.flags.chainGigs)
+  const maxPerBatch = Math.max(2, Math.min(5, Math.round(strategy.maxOrdersPerBatch || 3))) as 2 | 3 | 4 | 5
   return {
     useBayesianPricer: true,
     useZeroHoldoutScheduler: true,
     pricer: {
       strictCapacityGate: true,
-      minQuoteMultiplier: 1.29,
-      worldBaseMuFloor: 1.32,
+      minQuoteMultiplier: 1.22,
+      worldBaseMuFloor: 1.2,
       useStructuralPriors: anyStrat.useStructuralPriors ?? false,
       positivePriorsOnly: anyStrat.positivePriorsOnly ?? false,
       hybridMarginFilter: false,
@@ -3494,22 +3842,30 @@ export function getTop10DeskOptions(strategy: StrategyConfig): IntegratedDeskOpt
       hardenPostStops: anyStrat.hardenPostStops ?? false,
       repostNoFeeDrop: anyStrat.repostNoFeeDrop ?? false,
       smoothFeeStaircase: anyStrat.smoothFeeStaircase ?? false,
-      softCapacitySurge: anyStrat.softCapacitySurge ?? false,
-      adverseSelectionGuard: anyStrat.adverseSelectionGuard ?? false,
+      softCapacitySurge: anyStrat.softCapacitySurge ?? true,
+      adverseSelectionGuard: anyStrat.adverseSelectionGuard ?? true,
+      cleanAdverseGuard: anyStrat.cleanAdverseGuard ?? true,
       smartDirectOffers: anyStrat.smartDirectOffers ?? false,
+      slaRegimeControl: anyStrat.slaRegimeControl ?? true,
+      dealerShadowPricing: anyStrat.dealerShadowPricing ?? true,
+      fortressRescueEnabled: anyStrat.fortressRescueEnabled ?? false,
+      smartDirectOffersV2: anyStrat.smartDirectOffersV2 ?? true,
       ...(anyStrat.pricerOptions ?? {}),
     },
     chaining: chainingEnabled
       ? {
           enabled: true,
-          maxOrdersPerChain: 2,
-          maxGapMinutes: 25,
-          minOrderSlackMinutes: 600,
-          openFeeMinMult: 0.88,
-          openFeeMaxMult: 0.92,
+          maxOrdersPerChain: Math.min(3, maxPerBatch) as 2 | 3,
+          maxGapMinutes: 40,
+          maxTotalDriveMinutes: 660,
+          minOrderSlackMinutes: 18 * HOUR,
+          bookingBufferMinutes: 180,
+          openFeeMinMult: 0.96,
+          openFeeMaxMult: 1.06,
           quoteSynergyEnabled: false,
           allowChainedCapacityBypass: false,
           scarcityGated: true,
+          maxChainStartDay: 3,
           ...(anyStrat.chainingOptions ?? {}),
         }
       : { enabled: false },

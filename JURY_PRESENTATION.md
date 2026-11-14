@@ -19,6 +19,7 @@ Use the built-in Presentation Studio on port `3001` to export both hackathon sub
 | **Season 5** | `#54` | **€41,261.20** | `95.39%` | `5/5 RANKED` | Peak Run 4 `€11,905.32` (`95.29%` OT, `340` orders) |
 | **Season 6 (Saturday 12:00)** | **`#26 / 195`** *(peaked `#19`)* | **€51,570.20** *(+€10,309.00)* | **`94.29%`** | **`5/5 RANKED`** | Peak **Run 4 `€12,899.75` (`98.19%` OT)**; Run 3 `98.45%` OT |
 | **Season 7 (Saturday 15:00)** | — | **€53,081.41** *(+€1,511.21)* | **`93.11%`** | `4/5 RANKED` | **New All-Time Record: Run 5 `€15,041.68` (`96.12%` OT)**; 1,699 won orders |
+| **Season 8 (Saturday 18:00)** | **`#28 / 238`** *(36 ranked)* | **€45,734.35** | **`95.76%`** | **`5/5 RANKED`** | Promoted **`v23` (`F3`)**; Peak Run 2 **`€12,851.63` (`96.18%` OT)**; min OT **`93.21%`**; `1,393` won orders |
 
 **Season 6 World-by-World Ledger (`team: what-s-the-wifi`):**
 - **Run 1:** `€10,465.71` (`94.30%` OT, `263` orders, `RANKED`)
@@ -53,6 +54,17 @@ Use the built-in Presentation Studio on port `3001` to export both hackathon sub
 - `v15-candidate-eval` (`0.42` waiting cap, `1.405x` quote, `1.075x` fee): `€5,176.20/wk`, `91.5%` min OT on `spread-4` (**Rejected**: `-€1,050/wk`).
 - `v15-calibrated-eval` (`0.355` waiting cap, `1.442x` quote, `1.125x` fee): `€5,633.89/wk`, `92.0%` min OT on `spread-4` (**Rejected**: `-€592/wk` despite lifting `spread-1/2/3`).
 - `Strategy v16` single-seed autopilot drift (`0.347` cap): `€5,752/wk`, `93.7%` min OT (**Rejected & reverted**, fixed by enforcing 5-seed promotion gate in `autopilot.ts`).
+
+**F-Series Architecture Ablations (`spread-1..5`, Level 8 — Promoted Champion `v23`):**
+
+| Variant | Config Summary | Total 5-Seed Margin | Avg OT | Min OT | Fee/Rev | Key Per-Seed Takeaways |
+|---|---|---:|---:|---:|---:|---|
+| **`F3` (Promoted `v23`)** | `chain=false`, `1.22/1.20` Bayesian floor, `softCapacitySurge`, `cleanAdverseGuard`, `slaRegimeControl`, `smartDirectOffersV2` | **`€38,086.58`** | **`95.48%`** | **`94.22%`** | `70.15%` | `5/5 RANKED`; `spread-4` `€11,753.29 @ 95.27%`, `spread-1` `€9,632.33 @ 95.72%`, `spread-5` `€6,160.08 @ 94.22%` |
+| `F1` | `v21` base + `cleanAdverseGuard` + `slaRegime` + `dealerShadowPricing` (`chain=false`) | `€37,434.42` | `95.62%` | `94.22%` | — | `5/5 RANKED`; early `HARVEST` Day 2 overbooked `spread-5` (`€6,148.77`) |
+| `F5` | `chain=true` (selective Day <= 3), `1.29/1.32` floor, active-driver offer filter | `€37,363.63` | `95.02%` | `92.89%` | **`68.26%`** | Peak `spread-1` **`€10,427.43 @ 96.87%`** & `spread-3` `€3,371.08`; higher floor cut `spread-4` won volume |
+| `F4` | `chain=true` (5-car bundling, `<=45m` gap, `<=720m` drive) | `€37,155.29` | `93.76%` | `90.18%` | `69.31%` | Lifted `spread-1` (`€10,124.90`) & `spread-2` (`€8,280.30`), but pinched `spread-5` (`90.18%`, `27` late) |
+| `F2` | `F1` minus `cleanAdverseGuard`, Day >= 3 `HARVEST` | `€37,042.01` | `95.64%` | `94.53%` | `68.98%` | `cleanAdverseGuard` proved worth `+€392` (`F1` vs `F2`) and `+€1,045` in `F3` |
+| `F6` | `chain=true`, `1.24/1.25` floor, `FORTRESS` `0.929` | `€36,895.26` | `94.64%` | `91.85%` | `69.02%` | Chaining still dragged scarce `spread-5` (`€5,255.31`, `47` drops), confirming `chain=false` (`F3`) for live play |
 
 ---
 

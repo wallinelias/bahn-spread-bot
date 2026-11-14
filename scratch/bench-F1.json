@@ -1,0 +1,146 @@
+{
+  "tag": "F1",
+  "candidate": {
+    "version": 22,
+    "updatedAt": "2026-11-14T15:29:51.198Z",
+    "updatedBy": "gemini-4-hydrogen",
+    "flags": {
+      "selectiveDecline": true,
+      "optionSteering": true,
+      "flatFees": true,
+      "repositionOffers": true,
+      "noteNLP": true,
+      "dealerLearning": true,
+      "chainGigs": false,
+      "slackFees": true
+    },
+    "baseQuoteMultiplier": 1.42,
+    "sameDayQuotePremium": 0.25,
+    "minExpectedMarginRatio": 0.19,
+    "targetWinRate": 0.32,
+    "maxActiveWaitingPerDriver": 0.41,
+    "maxOrdersPerBatch": 5,
+    "baseFeeMultiplier": 1.05,
+    "maxNormalFeeMultiplier": 1.36,
+    "urgentFeeMultiplier": 1.75,
+    "maxUrgentFeeMultiplier": 2.2,
+    "scarcityTownFeeBoost": 0.14,
+    "directOfferDiscount": 1.015,
+    "targetOnTimeBuffer": 0.935,
+    "reasoningSummary": "Round w96b3b129427dc79b0233 achieved a €9,248.96 gross margin (27.90% of €33,144.74 revenue) on 333 won orders out of 1,037 requests (32.3% overall win rate, 42.6% targeted win rate), with 250 declined for high quotes. Driver fees consumed €23,073.43 (69.61% of revenue), while late refunds (€704.05, 2.12% of revenue), undelivered penalties (€63.30, 0.30% undelivered), waiting fees (€30.00), and failed visits (€25.00) remained well contained. On-time arrival share reached 94.59%, providing a 4.59 percentage point buffer above the 90.0% disqualification floor and 2.09 points above the 92.5% target, leaving room to harvest additional margin from quote pricing, fee shading, and improved direct offer conversion (currently only 4 accepted of 784 sent at 0.97x)."
+  },
+  "results": [
+    {
+      "seed": "spread-1",
+      "worldId": "wf53abaca5db3b7cc4a46",
+      "marginEur": 9763.5,
+      "onTimeShare": 0.954,
+      "ranked": true,
+      "won": 326,
+      "declined": 303,
+      "revEur": 29642.76,
+      "feeEur": 19339.79,
+      "feePctRev": 65.24,
+      "lateRefEur": 382.67,
+      "offersAcc": 1,
+      "offersTot": 346,
+      "offerConvPct": 0.29,
+      "drops": 28,
+      "lateDeliveries": 15,
+      "visitFailures": {
+        "not_ready": 1,
+        "closed": 2
+      }
+    },
+    {
+      "seed": "spread-2",
+      "worldId": "wa8ad35c7c6d9f719208d",
+      "marginEur": 7650.31,
+      "onTimeShare": 0.958,
+      "ranked": true,
+      "won": 262,
+      "declined": 319,
+      "revEur": 27520.74,
+      "feeEur": 19087.24,
+      "feePctRev": 69.36,
+      "lateRefEur": 462.15,
+      "offersAcc": 3,
+      "offersTot": 175,
+      "offerConvPct": 1.71,
+      "drops": 21,
+      "lateDeliveries": 11,
+      "visitFailures": {
+        "not_ready": 5,
+        "licence": 1,
+        "closed": 3
+      }
+    },
+    {
+      "seed": "spread-3",
+      "worldId": "w13447b7ac980a7a29bdd",
+      "marginEur": 2765.83,
+      "onTimeShare": 0.9645,
+      "ranked": true,
+      "won": 169,
+      "declined": 449,
+      "revEur": 16884.57,
+      "feeEur": 13347.48,
+      "feePctRev": 79.05,
+      "lateRefEur": 603.78,
+      "offersAcc": 5,
+      "offersTot": 220,
+      "offerConvPct": 2.27,
+      "drops": 20,
+      "lateDeliveries": 6,
+      "visitFailures": {
+        "closed": 3
+      }
+    },
+    {
+      "seed": "spread-4",
+      "worldId": "wfed2d357a49bd4b7333b",
+      "marginEur": 11106.01,
+      "onTimeShare": 0.9625,
+      "ranked": true,
+      "won": 293,
+      "declined": 293,
+      "revEur": 37066.25,
+      "feeEur": 24910.77,
+      "feePctRev": 67.21,
+      "lateRefEur": 741,
+      "offersAcc": 0,
+      "offersTot": 336,
+      "offerConvPct": 0,
+      "drops": 45,
+      "lateDeliveries": 11,
+      "visitFailures": {
+        "not_ready": 1,
+        "closed": 3
+      }
+    },
+    {
+      "seed": "spread-5",
+      "worldId": "wed835b43a8b0625850f0",
+      "marginEur": 6148.77,
+      "onTimeShare": 0.9422,
+      "ranked": true,
+      "won": 294,
+      "declined": 274,
+      "revEur": 32877.6,
+      "feeEur": 25117.79,
+      "feePctRev": 76.4,
+      "lateRefEur": 1324.98,
+      "offersAcc": 2,
+      "offersTot": 391,
+      "offerConvPct": 0.51,
+      "drops": 42,
+      "lateDeliveries": 16,
+      "visitFailures": {
+        "not_ready": 1
+      }
+    }
+  ],
+  "totalMargin": 37434.42,
+  "minOT": 0.9422,
+  "avgOT": 0.95624
+}

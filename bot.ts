@@ -583,8 +583,24 @@ export class QuantitativeDesk {
       }
       viewers.add(event.driverId)
       const orderId = this.gigOrder.get(event.gigId)
-      if (orderId && this.urgent.has(orderId) && !this.booked.has(event.gigId)) {
-        this.tryDirectOfferToDriver(event.gigId, event.driverId)
+      const order = orderId ? this.orders.get(orderId) : undefined
+      const post = this.posts.get(event.gigId)
+      const viewerProfile = this.roster.find((d) => d.id === event.driverId)
+      if (orderId && order && !this.booked.has(event.gigId) && viewerProfile) {
+        const isUrg = this.urgent.has(orderId)
+        const gigAge = post ? this.now - post.at : 0
+        const deliveryPlaceId = order.legs[order.legs.length - 1]?.delivery.placeId
+        const homePlace = this.placesById.get(viewerProfile.homePlaceId)
+        const deliveryPlace = deliveryPlaceId ? this.placesById.get(deliveryPlaceId) : undefined
+        const isHomeward = Boolean(
+          homePlace &&
+            deliveryPlace &&
+            Math.hypot((homePlace.lat - deliveryPlace.lat) * 111, (homePlace.lon - deliveryPlace.lon) * 55) <= 45,
+        )
+        const isActiveViewer = viewerProfile.completedGigs >= 15 || this.driverLastDelivery.has(event.driverId)
+        if ((isUrg && viewerProfile.completedGigs >= 8) || (isActiveViewer && (isHomeward || gigAge >= 30))) {
+          this.tryDirectOfferToDriver(event.gigId, event.driverId)
+        }
       }
     } else if (event.kind === "gig_booked") {
       this.booked.add(event.gigId)
