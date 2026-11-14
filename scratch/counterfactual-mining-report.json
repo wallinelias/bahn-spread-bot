@@ -1,0 +1,13 @@
+{
+  "updatedAt": "2026-11-14T14:14:18.975Z",
+  "filesParsed": 5,
+  "totalRequests": 10353,
+  "quotedCount": 9739,
+  "wonCount": 2157,
+  "lostCount": 7582,
+  "estimatedRegretEur": 6673.42,
+  "inPlaceChainPairsDetected": 1062,
+  "tunedLanes": 133,
+  "tunedDealers": 16,
+  "hoursWithClearingFee": 19
+}

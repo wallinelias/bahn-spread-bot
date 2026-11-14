@@ -1,0 +1,173 @@
+{
+  "C14a": {
+    "label": "Hybrid €12/12% + Priors + 0.88x@22h + CrisisShield (Chaining OFF)",
+    "totalMarginEur": 31796.16,
+    "avgMarginEur": 6359.23,
+    "avgOnTimeShare": 0.9175,
+    "minOnTimeShare": 0.8897,
+    "allRanked": false,
+    "totalWon": 1423,
+    "totalDrops": 173,
+    "rows": [
+      {
+        "variant": "C14a",
+        "seed": "spread-1",
+        "marginEur": 8442.28,
+        "revEur": 34279.62,
+        "wonOrders": 354,
+        "onTimeShare": 0.9266,
+        "ranked": true,
+        "gigDrops": 43,
+        "lateDeliveries": 26,
+        "visitFailures": {},
+        "lateRefundEur": 945.33
+      },
+      {
+        "variant": "C14a",
+        "seed": "spread-2",
+        "marginEur": 7385.04,
+        "revEur": 32348.72,
+        "wonOrders": 292,
+        "onTimeShare": 0.9521,
+        "ranked": true,
+        "gigDrops": 33,
+        "lateDeliveries": 14,
+        "visitFailures": {
+          "not_ready": 2,
+          "closed": 1
+        },
+        "lateRefundEur": 706.56
+      },
+      {
+        "variant": "C14a",
+        "seed": "spread-3",
+        "marginEur": 2077.35,
+        "revEur": 21010.45,
+        "wonOrders": 189,
+        "onTimeShare": 0.8942,
+        "ranked": false,
+        "gigDrops": 24,
+        "lateDeliveries": 20,
+        "visitFailures": {
+          "not_ready": 3,
+          "closed": 1
+        },
+        "lateRefundEur": 1040.12
+      },
+      {
+        "variant": "C14a",
+        "seed": "spread-4",
+        "marginEur": 9246.12,
+        "revEur": 41609.06,
+        "wonOrders": 307,
+        "onTimeShare": 0.9251,
+        "ranked": true,
+        "gigDrops": 35,
+        "lateDeliveries": 23,
+        "visitFailures": {
+          "closed": 6
+        },
+        "lateRefundEur": 1313.21
+      },
+      {
+        "variant": "C14a",
+        "seed": "spread-5",
+        "marginEur": 4645.37,
+        "revEur": 35580.62,
+        "wonOrders": 281,
+        "onTimeShare": 0.8897,
+        "ranked": false,
+        "gigDrops": 38,
+        "lateDeliveries": 31,
+        "visitFailures": {},
+        "lateRefundEur": 1535.03
+      }
+    ]
+  },
+  "C14b": {
+    "label": "C14a + Scarcity-Gated 2-Car Chaining (0.87-0.92x)",
+    "totalMarginEur": 29929.05,
+    "avgMarginEur": 5985.81,
+    "avgOnTimeShare": 0.902,
+    "minOnTimeShare": 0.8479,
+    "allRanked": false,
+    "totalWon": 1409,
+    "totalDrops": 150,
+    "rows": [
+      {
+        "variant": "C14b",
+        "seed": "spread-1",
+        "marginEur": 10864.19,
+        "revEur": 34917.15,
+        "wonOrders": 356,
+        "onTimeShare": 0.9466,
+        "ranked": true,
+        "gigDrops": 31,
+        "lateDeliveries": 19,
+        "visitFailures": {},
+        "lateRefundEur": 675.25
+      },
+      {
+        "variant": "C14b",
+        "seed": "spread-2",
+        "marginEur": 7640.91,
+        "revEur": 31816.21,
+        "wonOrders": 284,
+        "onTimeShare": 0.9507,
+        "ranked": true,
+        "gigDrops": 25,
+        "lateDeliveries": 14,
+        "visitFailures": {
+          "not_ready": 2
+        },
+        "lateRefundEur": 788.5
+      },
+      {
+        "variant": "C14b",
+        "seed": "spread-3",
+        "marginEur": 1176.59,
+        "revEur": 19952.5,
+        "wonOrders": 174,
+        "onTimeShare": 0.8908,
+        "ranked": false,
+        "gigDrops": 26,
+        "lateDeliveries": 19,
+        "visitFailures": {
+          "not_ready": 3,
+          "closed": 1
+        },
+        "lateRefundEur": 1289.83
+      },
+      {
+        "variant": "C14b",
+        "seed": "spread-4",
+        "marginEur": 7831.35,
+        "revEur": 38989.91,
+        "wonOrders": 286,
+        "onTimeShare": 0.8741,
+        "ranked": false,
+        "gigDrops": 28,
+        "lateDeliveries": 36,
+        "visitFailures": {
+          "closed": 3
+        },
+        "lateRefundEur": 2030.75
+      },
+      {
+        "variant": "C14b",
+        "seed": "spread-5",
+        "marginEur": 2416.01,
+        "revEur": 38266.94,
+        "wonOrders": 309,
+        "onTimeShare": 0.8479,
+        "ranked": false,
+        "gigDrops": 40,
+        "lateDeliveries": 43,
+        "visitFailures": {
+          "closed": 1
+        },
+        "lateRefundEur": 2147.28
+      }
+    ]
+  }
+}

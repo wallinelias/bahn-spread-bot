@@ -1,0 +1,407 @@
+[
+  {
+    "name": "Hypothesis H1 (Dynamic Compound Champion: q=1.468, f=1.145)",
+    "q": 1.468,
+    "f": 1.145,
+    "strategy": {
+      "version": 13,
+      "updatedAt": "2026-11-14T01:04:56.332Z",
+      "updatedBy": "quantitative-fallback",
+      "flags": {
+        "selectiveDecline": true,
+        "optionSteering": true,
+        "flatFees": true,
+        "repositionOffers": true,
+        "noteNLP": true,
+        "dealerLearning": true,
+        "chainGigs": false,
+        "slackFees": true
+      },
+      "baseQuoteMultiplier": 1.468,
+      "sameDayQuotePremium": 0.214,
+      "minExpectedMarginRatio": 0.18,
+      "targetWinRate": 0.315,
+      "maxActiveWaitingPerDriver": 0.32,
+      "maxOrdersPerBatch": 5,
+      "baseFeeMultiplier": 1.145,
+      "maxNormalFeeMultiplier": 1.45,
+      "urgentFeeMultiplier": 1.92,
+      "maxUrgentFeeMultiplier": 2.35,
+      "scarcityTownFeeBoost": 0.17,
+      "directOfferDiscount": 0.96,
+      "targetOnTimeBuffer": 0.935,
+      "reasoningSummary": "Maintained balanced shortage dispatch posture at 95.1% on-time and €11151.20 gross margin."
+    },
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 7266.23,
+        "onTimeShare": 0.947,
+        "wonOrders": 264,
+        "winRate": 0.3177,
+        "gigDrops": 28,
+        "lateDeliveries": 8,
+        "deadlineWarnings": 28,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 6410.59,
+        "onTimeShare": 0.9697,
+        "wonOrders": 165,
+        "winRate": 0.1953,
+        "gigDrops": 12,
+        "lateDeliveries": 4,
+        "deadlineWarnings": 10,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": 1847.65,
+        "onTimeShare": 0.9512,
+        "wonOrders": 82,
+        "winRate": 0.1042,
+        "gigDrops": 8,
+        "lateDeliveries": 4,
+        "deadlineWarnings": 6,
+        "ranked": true
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 9608.93,
+        "onTimeShare": 0.9494,
+        "wonOrders": 257,
+        "winRate": 0.3169,
+        "gigDrops": 30,
+        "lateDeliveries": 12,
+        "deadlineWarnings": 27,
+        "ranked": true
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 5997.33,
+        "onTimeShare": 0.9538,
+        "wonOrders": 195,
+        "winRate": 0.23,
+        "gigDrops": 24,
+        "lateDeliveries": 7,
+        "deadlineWarnings": 11,
+        "ranked": true
+      }
+    ],
+    "totalMarginEur": 31130.73,
+    "avgMarginEur": 6226.15,
+    "avgOnTimeShare": 0.9542,
+    "minOnTimeShare": 0.947,
+    "avgWonOrders": 192.6,
+    "allRanked": true,
+    "gatePassed": false,
+    "violations": [
+      "Avg margin €6226.15/wk does not beat champion gate €7282.12/wk (Δ: €-1055.97)"
+    ]
+  },
+  {
+    "name": "Hypothesis H2 (Lean Driver Fee Champion: q=1.468, f=1.130)",
+    "q": 1.468,
+    "f": 1.13,
+    "strategy": {
+      "version": 13,
+      "updatedAt": "2026-11-14T01:04:56.332Z",
+      "updatedBy": "quantitative-fallback",
+      "flags": {
+        "selectiveDecline": true,
+        "optionSteering": true,
+        "flatFees": true,
+        "repositionOffers": true,
+        "noteNLP": true,
+        "dealerLearning": true,
+        "chainGigs": false,
+        "slackFees": true
+      },
+      "baseQuoteMultiplier": 1.468,
+      "sameDayQuotePremium": 0.214,
+      "minExpectedMarginRatio": 0.18,
+      "targetWinRate": 0.315,
+      "maxActiveWaitingPerDriver": 0.32,
+      "maxOrdersPerBatch": 5,
+      "baseFeeMultiplier": 1.13,
+      "maxNormalFeeMultiplier": 1.45,
+      "urgentFeeMultiplier": 1.92,
+      "maxUrgentFeeMultiplier": 2.35,
+      "scarcityTownFeeBoost": 0.17,
+      "directOfferDiscount": 0.96,
+      "targetOnTimeBuffer": 0.935,
+      "reasoningSummary": "Maintained balanced shortage dispatch posture at 95.1% on-time and €11151.20 gross margin."
+    },
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 5746.08,
+        "onTimeShare": 0.9432,
+        "wonOrders": 264,
+        "winRate": 0.3158,
+        "gigDrops": 35,
+        "lateDeliveries": 9,
+        "deadlineWarnings": 36,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 6057.05,
+        "onTimeShare": 0.9634,
+        "wonOrders": 164,
+        "winRate": 0.1918,
+        "gigDrops": 14,
+        "lateDeliveries": 4,
+        "deadlineWarnings": 10,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": 1923.56,
+        "onTimeShare": 0.9551,
+        "wonOrders": 89,
+        "winRate": 0.1115,
+        "gigDrops": 15,
+        "lateDeliveries": 4,
+        "deadlineWarnings": 7,
+        "ranked": true
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 7394.89,
+        "onTimeShare": 0.9414,
+        "wonOrders": 256,
+        "winRate": 0.3141,
+        "gigDrops": 46,
+        "lateDeliveries": 14,
+        "deadlineWarnings": 37,
+        "ranked": true
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 4921.59,
+        "onTimeShare": 0.9381,
+        "wonOrders": 194,
+        "winRate": 0.228,
+        "gigDrops": 22,
+        "lateDeliveries": 10,
+        "deadlineWarnings": 12,
+        "ranked": true
+      }
+    ],
+    "totalMarginEur": 26043.17,
+    "avgMarginEur": 5208.63,
+    "avgOnTimeShare": 0.9482,
+    "minOnTimeShare": 0.9381,
+    "avgWonOrders": 193.4,
+    "allRanked": true,
+    "gatePassed": false,
+    "violations": [
+      "Avg margin €5208.63/wk does not beat champion gate €7282.12/wk (Δ: €-2073.49)"
+    ]
+  },
+  {
+    "name": "Hypothesis H3 (Ultra-Lean Driver Fee: q=1.468, f=1.120)",
+    "q": 1.468,
+    "f": 1.12,
+    "strategy": {
+      "version": 13,
+      "updatedAt": "2026-11-14T01:04:56.332Z",
+      "updatedBy": "quantitative-fallback",
+      "flags": {
+        "selectiveDecline": true,
+        "optionSteering": true,
+        "flatFees": true,
+        "repositionOffers": true,
+        "noteNLP": true,
+        "dealerLearning": true,
+        "chainGigs": false,
+        "slackFees": true
+      },
+      "baseQuoteMultiplier": 1.468,
+      "sameDayQuotePremium": 0.214,
+      "minExpectedMarginRatio": 0.18,
+      "targetWinRate": 0.315,
+      "maxActiveWaitingPerDriver": 0.32,
+      "maxOrdersPerBatch": 5,
+      "baseFeeMultiplier": 1.12,
+      "maxNormalFeeMultiplier": 1.45,
+      "urgentFeeMultiplier": 1.92,
+      "maxUrgentFeeMultiplier": 2.35,
+      "scarcityTownFeeBoost": 0.17,
+      "directOfferDiscount": 0.96,
+      "targetOnTimeBuffer": 0.935,
+      "reasoningSummary": "Maintained balanced shortage dispatch posture at 95.1% on-time and €11151.20 gross margin."
+    },
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 6225.62,
+        "onTimeShare": 0.947,
+        "wonOrders": 264,
+        "winRate": 0.3158,
+        "gigDrops": 31,
+        "lateDeliveries": 8,
+        "deadlineWarnings": 26,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 5800.43,
+        "onTimeShare": 0.9632,
+        "wonOrders": 163,
+        "winRate": 0.1902,
+        "gigDrops": 18,
+        "lateDeliveries": 5,
+        "deadlineWarnings": 9,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": 1847.69,
+        "onTimeShare": 0.9551,
+        "wonOrders": 89,
+        "winRate": 0.1103,
+        "gigDrops": 13,
+        "lateDeliveries": 4,
+        "deadlineWarnings": 7,
+        "ranked": true
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 7408.62,
+        "onTimeShare": 0.9412,
+        "wonOrders": 255,
+        "winRate": 0.3125,
+        "gigDrops": 43,
+        "lateDeliveries": 11,
+        "deadlineWarnings": 29,
+        "ranked": true
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 4985.62,
+        "onTimeShare": 0.9343,
+        "wonOrders": 198,
+        "winRate": 0.2319,
+        "gigDrops": 23,
+        "lateDeliveries": 11,
+        "deadlineWarnings": 17,
+        "ranked": true
+      }
+    ],
+    "totalMarginEur": 26267.98,
+    "avgMarginEur": 5253.6,
+    "avgOnTimeShare": 0.9482,
+    "minOnTimeShare": 0.9343,
+    "avgWonOrders": 193.8,
+    "allRanked": true,
+    "gatePassed": false,
+    "violations": [
+      "Avg margin €5253.60/wk does not beat champion gate €7282.12/wk (Δ: €-2028.52)"
+    ]
+  },
+  {
+    "name": "Hypothesis H4 (q=1.472 Baseline Quote + Lean Fee f=1.130)",
+    "q": 1.472,
+    "f": 1.13,
+    "strategy": {
+      "version": 13,
+      "updatedAt": "2026-11-14T01:04:56.332Z",
+      "updatedBy": "quantitative-fallback",
+      "flags": {
+        "selectiveDecline": true,
+        "optionSteering": true,
+        "flatFees": true,
+        "repositionOffers": true,
+        "noteNLP": true,
+        "dealerLearning": true,
+        "chainGigs": false,
+        "slackFees": true
+      },
+      "baseQuoteMultiplier": 1.472,
+      "sameDayQuotePremium": 0.214,
+      "minExpectedMarginRatio": 0.18,
+      "targetWinRate": 0.315,
+      "maxActiveWaitingPerDriver": 0.32,
+      "maxOrdersPerBatch": 5,
+      "baseFeeMultiplier": 1.13,
+      "maxNormalFeeMultiplier": 1.45,
+      "urgentFeeMultiplier": 1.92,
+      "maxUrgentFeeMultiplier": 2.35,
+      "scarcityTownFeeBoost": 0.17,
+      "directOfferDiscount": 0.96,
+      "targetOnTimeBuffer": 0.935,
+      "reasoningSummary": "Maintained balanced shortage dispatch posture at 95.1% on-time and €11151.20 gross margin."
+    },
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 6397.72,
+        "onTimeShare": 0.9509,
+        "wonOrders": 265,
+        "winRate": 0.3155,
+        "gigDrops": 31,
+        "lateDeliveries": 7,
+        "deadlineWarnings": 28,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 6454.08,
+        "onTimeShare": 0.9689,
+        "wonOrders": 161,
+        "winRate": 0.1881,
+        "gigDrops": 8,
+        "lateDeliveries": 3,
+        "deadlineWarnings": 7,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": 2084.95,
+        "onTimeShare": 0.9524,
+        "wonOrders": 84,
+        "winRate": 0.105,
+        "gigDrops": 9,
+        "lateDeliveries": 4,
+        "deadlineWarnings": 7,
+        "ranked": true
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 6647.7,
+        "onTimeShare": 0.9305,
+        "wonOrders": 259,
+        "winRate": 0.3178,
+        "gigDrops": 37,
+        "lateDeliveries": 16,
+        "deadlineWarnings": 39,
+        "ranked": true
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 5382.85,
+        "onTimeShare": 0.9278,
+        "wonOrders": 194,
+        "winRate": 0.2274,
+        "gigDrops": 21,
+        "lateDeliveries": 12,
+        "deadlineWarnings": 17,
+        "ranked": true
+      }
+    ],
+    "totalMarginEur": 26967.3,
+    "avgMarginEur": 5393.46,
+    "avgOnTimeShare": 0.9461,
+    "minOnTimeShare": 0.9278,
+    "avgWonOrders": 192.6,
+    "allRanked": true,
+    "gatePassed": false,
+    "violations": [
+      "Worst seed on-time (92.8%) < 93.3% safety buffer",
+      "Avg margin €5393.46/wk does not beat champion gate €7282.12/wk (Δ: €-1888.66)"
+    ]
+  }
+]

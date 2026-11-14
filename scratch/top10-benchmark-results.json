@@ -1,0 +1,633 @@
+[
+  {
+    "name": "Top10 Candidate 1: v15 + Multi-Car Chaining + Quote Synergy",
+    "toggles": {
+      "chaining": {
+        "enabled": true,
+        "maxOrdersPerChain": 3,
+        "maxGapMinutes": 45,
+        "quoteSynergyEnabled": true
+      }
+    },
+    "seeds": [
+      "spread-1",
+      "spread-2",
+      "spread-3",
+      "spread-4",
+      "spread-5"
+    ],
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 8741.61,
+        "onTimeShare": 0.9302,
+        "wonOrders": 315,
+        "winRate": 0.3642,
+        "gigDrops": 25,
+        "lateDeliveries": 17,
+        "deadlineWarnings": 59,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 7880.01,
+        "onTimeShare": 0.9504,
+        "wonOrders": 242,
+        "winRate": 0.2884,
+        "gigDrops": 30,
+        "lateDeliveries": 9,
+        "deadlineWarnings": 24,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": 383.34,
+        "onTimeShare": 0.8942,
+        "wonOrders": 189,
+        "winRate": 0.2299,
+        "gigDrops": 25,
+        "lateDeliveries": 20,
+        "deadlineWarnings": 56,
+        "ranked": false
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 8744.21,
+        "onTimeShare": 0.8779,
+        "wonOrders": 303,
+        "winRate": 0.3668,
+        "gigDrops": 38,
+        "lateDeliveries": 37,
+        "deadlineWarnings": 71,
+        "ranked": false
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 4527.85,
+        "onTimeShare": 0.8949,
+        "wonOrders": 276,
+        "winRate": 0.3158,
+        "gigDrops": 29,
+        "lateDeliveries": 25,
+        "deadlineWarnings": 60,
+        "ranked": false
+      }
+    ],
+    "avgMarginEur": 6055.4,
+    "totalMarginEur": 30277.02,
+    "avgOnTimeShare": 0.9095,
+    "minOnTimeShare": 0.8779,
+    "avgWonOrders": 265,
+    "allRanked": false,
+    "extraTelemetry": {
+      "perSeedExtra": [
+        {
+          "seed": "spread-3",
+          "visitFailures": {
+            "not_ready": 3,
+            "closed": 2
+          },
+          "visitFailuresTotal": 5,
+          "chainStats": {
+            "chainedGigsPosted": 35,
+            "chained2CarPosted": 29,
+            "chained3CarPosted": 6,
+            "periodicConsolidations": 4,
+            "chainSplitsOnUrgent": 6,
+            "chainSplitsOnExpire": 1,
+            "chainSplitsOnDrop": 4,
+            "chainSplitsOnCancel": 0,
+            "rejectedChainPosts": 2,
+            "quoteSynergyHits": 342
+          },
+          "revenueEur": 21794.09,
+          "marginShare": 0.0176,
+          "totalGigsPosted": 264,
+          "totalGigsBooked": 207,
+          "totalDirectOffers": 1077,
+          "acceptedDirectOffers": 7
+        },
+        {
+          "seed": "spread-1",
+          "visitFailures": {
+            "closed": 4
+          },
+          "visitFailuresTotal": 4,
+          "chainStats": {
+            "chainedGigsPosted": 62,
+            "chained2CarPosted": 45,
+            "chained3CarPosted": 17,
+            "periodicConsolidations": 10,
+            "chainSplitsOnUrgent": 6,
+            "chainSplitsOnExpire": 1,
+            "chainSplitsOnDrop": 5,
+            "chainSplitsOnCancel": 0,
+            "rejectedChainPosts": 4,
+            "quoteSynergyHits": 347
+          },
+          "revenueEur": 31785.46,
+          "marginShare": 0.275,
+          "totalGigsPosted": 408,
+          "totalGigsBooked": 306,
+          "totalDirectOffers": 942,
+          "acceptedDirectOffers": 2
+        },
+        {
+          "seed": "spread-2",
+          "visitFailures": {},
+          "visitFailuresTotal": 0,
+          "chainStats": {
+            "chainedGigsPosted": 38,
+            "chained2CarPosted": 29,
+            "chained3CarPosted": 9,
+            "periodicConsolidations": 1,
+            "chainSplitsOnUrgent": 2,
+            "chainSplitsOnExpire": 0,
+            "chainSplitsOnDrop": 4,
+            "chainSplitsOnCancel": 0,
+            "rejectedChainPosts": 3,
+            "quoteSynergyHits": 236
+          },
+          "revenueEur": 28398.19,
+          "marginShare": 0.2775,
+          "totalGigsPosted": 281,
+          "totalGigsBooked": 246,
+          "totalDirectOffers": 356,
+          "acceptedDirectOffers": 3
+        },
+        {
+          "seed": "spread-4",
+          "visitFailures": {
+            "closed": 3
+          },
+          "visitFailuresTotal": 3,
+          "chainStats": {
+            "chainedGigsPosted": 70,
+            "chained2CarPosted": 55,
+            "chained3CarPosted": 15,
+            "periodicConsolidations": 14,
+            "chainSplitsOnUrgent": 10,
+            "chainSplitsOnExpire": 0,
+            "chainSplitsOnDrop": 9,
+            "chainSplitsOnCancel": 0,
+            "rejectedChainPosts": 7,
+            "quoteSynergyHits": 403
+          },
+          "revenueEur": 45196.47,
+          "marginShare": 0.1935,
+          "totalGigsPosted": 423,
+          "totalGigsBooked": 307,
+          "totalDirectOffers": 1302,
+          "acceptedDirectOffers": 2
+        },
+        {
+          "seed": "spread-5",
+          "visitFailures": {
+            "no_plates": 1
+          },
+          "visitFailuresTotal": 1,
+          "chainStats": {
+            "chainedGigsPosted": 48,
+            "chained2CarPosted": 35,
+            "chained3CarPosted": 13,
+            "periodicConsolidations": 11,
+            "chainSplitsOnUrgent": 14,
+            "chainSplitsOnExpire": 1,
+            "chainSplitsOnDrop": 5,
+            "chainSplitsOnCancel": 0,
+            "rejectedChainPosts": 0,
+            "quoteSynergyHits": 363
+          },
+          "revenueEur": 36616.98,
+          "marginShare": 0.1237,
+          "totalGigsPosted": 373,
+          "totalGigsBooked": 286,
+          "totalDirectOffers": 888,
+          "acceptedDirectOffers": 5
+        }
+      ]
+    }
+  },
+  {
+    "name": "Top10 Candidate 2: Integrated (Bayesian Pricer + Zero-Holdout + Multi-Car Chaining)",
+    "toggles": {
+      "useBayesianPricer": true,
+      "useZeroHoldoutScheduler": true,
+      "chaining": {
+        "enabled": true,
+        "maxOrdersPerChain": 3,
+        "maxGapMinutes": 45,
+        "quoteSynergyEnabled": true
+      }
+    },
+    "seeds": [
+      "spread-1",
+      "spread-2",
+      "spread-3",
+      "spread-4",
+      "spread-5"
+    ],
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 10649.89,
+        "onTimeShare": 0.9435,
+        "wonOrders": 354,
+        "winRate": 0.3711,
+        "gigDrops": 41,
+        "lateDeliveries": 20,
+        "deadlineWarnings": 37,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 8555.67,
+        "onTimeShare": 0.9619,
+        "wonOrders": 315,
+        "winRate": 0.3398,
+        "gigDrops": 31,
+        "lateDeliveries": 12,
+        "deadlineWarnings": 27,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": -65.19,
+        "onTimeShare": 0.8715,
+        "wonOrders": 249,
+        "winRate": 0.3015,
+        "gigDrops": 28,
+        "lateDeliveries": 30,
+        "deadlineWarnings": 71,
+        "ranked": false
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 6689.14,
+        "onTimeShare": 0.8635,
+        "wonOrders": 337,
+        "winRate": 0.3492,
+        "gigDrops": 43,
+        "lateDeliveries": 46,
+        "deadlineWarnings": 99,
+        "ranked": false
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 2010.47,
+        "onTimeShare": 0.8598,
+        "wonOrders": 321,
+        "winRate": 0.3415,
+        "gigDrops": 50,
+        "lateDeliveries": 44,
+        "deadlineWarnings": 94,
+        "ranked": false
+      }
+    ],
+    "avgMarginEur": 5568,
+    "totalMarginEur": 27839.98,
+    "avgOnTimeShare": 0.9,
+    "minOnTimeShare": 0.8598,
+    "avgWonOrders": 315.2,
+    "allRanked": false,
+    "extraTelemetry": {
+      "perSeedExtra": [
+        {
+          "seed": "spread-1",
+          "visitFailures": {
+            "closed": 1
+          },
+          "visitFailuresTotal": 1,
+          "chainStats": {
+            "chainedGigsPosted": 66,
+            "chained2CarPosted": 46,
+            "chained3CarPosted": 20,
+            "periodicConsolidations": 4,
+            "chainSplitsOnUrgent": 2,
+            "chainSplitsOnExpire": 0,
+            "chainSplitsOnDrop": 6,
+            "chainSplitsOnCancel": 0,
+            "rejectedChainPosts": 7,
+            "quoteSynergyHits": 143
+          },
+          "revenueEur": 33858.7,
+          "marginShare": 0.3145,
+          "totalGigsPosted": 428,
+          "totalGigsBooked": 345,
+          "totalDirectOffers": 1048,
+          "acceptedDirectOffers": 2
+        },
+        {
+          "seed": "spread-3",
+          "visitFailures": {
+            "not_ready": 3,
+            "closed": 3
+          },
+          "visitFailuresTotal": 6,
+          "chainStats": {
+            "chainedGigsPosted": 75,
+            "chained2CarPosted": 50,
+            "chained3CarPosted": 25,
+            "periodicConsolidations": 14,
+            "chainSplitsOnUrgent": 14,
+            "chainSplitsOnExpire": 1,
+            "chainSplitsOnDrop": 4,
+            "chainSplitsOnCancel": 3,
+            "rejectedChainPosts": 3,
+            "quoteSynergyHits": 236
+          },
+          "revenueEur": 24864.11,
+          "marginShare": -0.0026,
+          "totalGigsPosted": 374,
+          "totalGigsBooked": 249,
+          "totalDirectOffers": 1420,
+          "acceptedDirectOffers": 7
+        },
+        {
+          "seed": "spread-2",
+          "visitFailures": {
+            "not_ready": 1
+          },
+          "visitFailuresTotal": 1,
+          "chainStats": {
+            "chainedGigsPosted": 63,
+            "chained2CarPosted": 47,
+            "chained3CarPosted": 16,
+            "periodicConsolidations": 4,
+            "chainSplitsOnUrgent": 5,
+            "chainSplitsOnExpire": 0,
+            "chainSplitsOnDrop": 5,
+            "chainSplitsOnCancel": 0,
+            "rejectedChainPosts": 8,
+            "quoteSynergyHits": 208
+          },
+          "revenueEur": 33604.67,
+          "marginShare": 0.2546,
+          "totalGigsPosted": 383,
+          "totalGigsBooked": 307,
+          "totalDirectOffers": 614,
+          "acceptedDirectOffers": 4
+        },
+        {
+          "seed": "spread-4",
+          "visitFailures": {
+            "closed": 4
+          },
+          "visitFailuresTotal": 4,
+          "chainStats": {
+            "chainedGigsPosted": 79,
+            "chained2CarPosted": 58,
+            "chained3CarPosted": 21,
+            "periodicConsolidations": 10,
+            "chainSplitsOnUrgent": 18,
+            "chainSplitsOnExpire": 1,
+            "chainSplitsOnDrop": 8,
+            "chainSplitsOnCancel": 0,
+            "rejectedChainPosts": 5,
+            "quoteSynergyHits": 309
+          },
+          "revenueEur": 47122.92,
+          "marginShare": 0.142,
+          "totalGigsPosted": 480,
+          "totalGigsBooked": 346,
+          "totalDirectOffers": 1821,
+          "acceptedDirectOffers": 6
+        },
+        {
+          "seed": "spread-5",
+          "visitFailures": {
+            "no_plates": 1,
+            "closed": 1
+          },
+          "visitFailuresTotal": 2,
+          "chainStats": {
+            "chainedGigsPosted": 79,
+            "chained2CarPosted": 52,
+            "chained3CarPosted": 27,
+            "periodicConsolidations": 15,
+            "chainSplitsOnUrgent": 19,
+            "chainSplitsOnExpire": 1,
+            "chainSplitsOnDrop": 11,
+            "chainSplitsOnCancel": 1,
+            "rejectedChainPosts": 3,
+            "quoteSynergyHits": 239
+          },
+          "revenueEur": 39377.38,
+          "marginShare": 0.0511,
+          "totalGigsPosted": 487,
+          "totalGigsBooked": 350,
+          "totalDirectOffers": 1582,
+          "acceptedDirectOffers": 8
+        }
+      ]
+    }
+  },
+  {
+    "name": "Top10 Candidate 3: Integrated (v14 Safety Base + Bayesian Pricer + Multi-Car Chaining)",
+    "toggles": {
+      "useBayesianPricer": true,
+      "useZeroHoldoutScheduler": true,
+      "chaining": {
+        "enabled": true,
+        "maxOrdersPerChain": 3,
+        "maxGapMinutes": 45,
+        "quoteSynergyEnabled": true
+      }
+    },
+    "seeds": [
+      "spread-1",
+      "spread-2",
+      "spread-3",
+      "spread-4",
+      "spread-5"
+    ],
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 11099.35,
+        "onTimeShare": 0.961,
+        "wonOrders": 333,
+        "winRate": 0.3801,
+        "gigDrops": 29,
+        "lateDeliveries": 13,
+        "deadlineWarnings": 26,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 8119.46,
+        "onTimeShare": 0.9476,
+        "wonOrders": 286,
+        "winRate": 0.3405,
+        "gigDrops": 33,
+        "lateDeliveries": 15,
+        "deadlineWarnings": 23,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": 2161.95,
+        "onTimeShare": 0.915,
+        "wonOrders": 200,
+        "winRate": 0.318,
+        "gigDrops": 29,
+        "lateDeliveries": 17,
+        "deadlineWarnings": 38,
+        "ranked": true
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 9687.84,
+        "onTimeShare": 0.906,
+        "wonOrders": 319,
+        "winRate": 0.3525,
+        "gigDrops": 31,
+        "lateDeliveries": 30,
+        "deadlineWarnings": 67,
+        "ranked": true
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 1941.76,
+        "onTimeShare": 0.8558,
+        "wonOrders": 312,
+        "winRate": 0.3679,
+        "gigDrops": 39,
+        "lateDeliveries": 43,
+        "deadlineWarnings": 93,
+        "ranked": false
+      }
+    ],
+    "avgMarginEur": 6602.07,
+    "totalMarginEur": 33010.36,
+    "avgOnTimeShare": 0.9171,
+    "minOnTimeShare": 0.8558,
+    "avgWonOrders": 290,
+    "allRanked": false,
+    "extraTelemetry": {
+      "perSeedExtra": [
+        {
+          "seed": "spread-2",
+          "visitFailures": {
+            "closed": 1
+          },
+          "visitFailuresTotal": 1,
+          "chainStats": {
+            "chainedGigsPosted": 76,
+            "chained2CarPosted": 58,
+            "chained3CarPosted": 18,
+            "periodicConsolidations": 8,
+            "chainSplitsOnUrgent": 5,
+            "chainSplitsOnExpire": 0,
+            "chainSplitsOnDrop": 11,
+            "chainSplitsOnCancel": 0,
+            "rejectedChainPosts": 9,
+            "quoteSynergyHits": 225
+          },
+          "revenueEur": 30275.65,
+          "marginShare": 0.2682,
+          "totalGigsPosted": 372,
+          "totalGigsBooked": 277,
+          "totalDirectOffers": 376,
+          "acceptedDirectOffers": 1
+        },
+        {
+          "seed": "spread-3",
+          "visitFailures": {},
+          "visitFailuresTotal": 0,
+          "chainStats": {
+            "chainedGigsPosted": 45,
+            "chained2CarPosted": 34,
+            "chained3CarPosted": 11,
+            "periodicConsolidations": 6,
+            "chainSplitsOnUrgent": 4,
+            "chainSplitsOnExpire": 1,
+            "chainSplitsOnDrop": 5,
+            "chainSplitsOnCancel": 1,
+            "rejectedChainPosts": 4,
+            "quoteSynergyHits": 157
+          },
+          "revenueEur": 19723.52,
+          "marginShare": 0.1096,
+          "totalGigsPosted": 269,
+          "totalGigsBooked": 209,
+          "totalDirectOffers": 851,
+          "acceptedDirectOffers": 2
+        },
+        {
+          "seed": "spread-1",
+          "visitFailures": {},
+          "visitFailuresTotal": 0,
+          "chainStats": {
+            "chainedGigsPosted": 67,
+            "chained2CarPosted": 48,
+            "chained3CarPosted": 19,
+            "periodicConsolidations": 5,
+            "chainSplitsOnUrgent": 4,
+            "chainSplitsOnExpire": 0,
+            "chainSplitsOnDrop": 2,
+            "chainSplitsOnCancel": 0,
+            "rejectedChainPosts": 8,
+            "quoteSynergyHits": 149
+          },
+          "revenueEur": 31983.56,
+          "marginShare": 0.347,
+          "totalGigsPosted": 398,
+          "totalGigsBooked": 311,
+          "totalDirectOffers": 491,
+          "acceptedDirectOffers": 0
+        },
+        {
+          "seed": "spread-4",
+          "visitFailures": {
+            "closed": 8
+          },
+          "visitFailuresTotal": 8,
+          "chainStats": {
+            "chainedGigsPosted": 79,
+            "chained2CarPosted": 60,
+            "chained3CarPosted": 19,
+            "periodicConsolidations": 12,
+            "chainSplitsOnUrgent": 9,
+            "chainSplitsOnExpire": 0,
+            "chainSplitsOnDrop": 7,
+            "chainSplitsOnCancel": 0,
+            "rejectedChainPosts": 6,
+            "quoteSynergyHits": 255
+          },
+          "revenueEur": 44557.01,
+          "marginShare": 0.2174,
+          "totalGigsPosted": 434,
+          "totalGigsBooked": 312,
+          "totalDirectOffers": 1205,
+          "acceptedDirectOffers": 7
+        },
+        {
+          "seed": "spread-5",
+          "visitFailures": {
+            "no_plates": 1
+          },
+          "visitFailuresTotal": 1,
+          "chainStats": {
+            "chainedGigsPosted": 89,
+            "chained2CarPosted": 58,
+            "chained3CarPosted": 31,
+            "periodicConsolidations": 20,
+            "chainSplitsOnUrgent": 18,
+            "chainSplitsOnExpire": 2,
+            "chainSplitsOnDrop": 6,
+            "chainSplitsOnCancel": 1,
+            "rejectedChainPosts": 4,
+            "quoteSynergyHits": 226
+          },
+          "revenueEur": 36141.79,
+          "marginShare": 0.0537,
+          "totalGigsPosted": 468,
+          "totalGigsBooked": 310,
+          "totalDirectOffers": 1800,
+          "acceptedDirectOffers": 4
+        }
+      ]
+    }
+  }
+]

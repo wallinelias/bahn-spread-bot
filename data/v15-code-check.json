@@ -1,0 +1,52 @@
+{
+  "strategyVersion": 14,
+  "seeds": [
+    "spread-1",
+    "spread-2",
+    "spread-3",
+    "spread-4",
+    "spread-5"
+  ],
+  "results": [
+    {
+      "variant": "ALL ON (baseline)",
+      "seed": "spread-3",
+      "marginCents": 65597,
+      "onTimeShare": 0.927710843373494,
+      "wonOrders": 83,
+      "ranked": true
+    },
+    {
+      "variant": "ALL ON (baseline)",
+      "seed": "spread-2",
+      "marginCents": 513238,
+      "onTimeShare": 0.9642857142857143,
+      "wonOrders": 168,
+      "ranked": true
+    },
+    {
+      "variant": "ALL ON (baseline)",
+      "seed": "spread-1",
+      "marginCents": 629374,
+      "onTimeShare": 0.9461538461538461,
+      "wonOrders": 260,
+      "ranked": true
+    },
+    {
+      "variant": "ALL ON (baseline)",
+      "seed": "spread-4",
+      "marginCents": 643269,
+      "onTimeShare": 0.9444444444444444,
+      "wonOrders": 234,
+      "ranked": true
+    },
+    {
+      "variant": "ALL ON (baseline)",
+      "seed": "spread-5",
+      "marginCents": 405305,
+      "onTimeShare": 0.9365079365079365,
+      "wonOrders": 189,
+      "ranked": true
+    }
+  ]
+}

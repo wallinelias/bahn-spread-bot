@@ -1,0 +1,29 @@
+{
+  "version": 22,
+  "updatedAt": "2026-11-14T15:29:51.198Z",
+  "updatedBy": "gemini-4-hydrogen",
+  "flags": {
+    "selectiveDecline": true,
+    "optionSteering": true,
+    "flatFees": true,
+    "repositionOffers": true,
+    "noteNLP": true,
+    "dealerLearning": true,
+    "chainGigs": false,
+    "slackFees": true
+  },
+  "baseQuoteMultiplier": 1.44,
+  "sameDayQuotePremium": 0.25,
+  "minExpectedMarginRatio": 0.2,
+  "targetWinRate": 0.33,
+  "maxActiveWaitingPerDriver": 0.43,
+  "maxOrdersPerBatch": 5,
+  "baseFeeMultiplier": 1.01,
+  "maxNormalFeeMultiplier": 1.33,
+  "urgentFeeMultiplier": 1.75,
+  "maxUrgentFeeMultiplier": 2.2,
+  "scarcityTownFeeBoost": 0.14,
+  "directOfferDiscount": 1,
+  "targetOnTimeBuffer": 0.935,
+  "reasoningSummary": "Round w96b3b129427dc79b0233 achieved a €9,248.96 gross margin (27.90% of €33,144.74 revenue) on 333 won orders out of 1,037 requests (32.3% overall win rate, 42.6% targeted win rate), with 250 declined for high quotes. Driver fees consumed €23,073.43 (69.61% of revenue), while late refunds (€704.05, 2.12% of revenue), undelivered penalties (€63.30, 0.30% undelivered), waiting fees (€30.00), and failed visits (€25.00) remained well contained. On-time arrival share reached 94.59%, providing a 4.59 percentage point buffer above the 90.0% disqualification floor and 2.09 points above the 92.5% target, leaving room to harvest additional margin from quote pricing, fee shading, and improved direct offer conversion (currently only 4 accepted of 784 sent at 0.97x)."
+}

@@ -1,0 +1,372 @@
+{
+  "strategyVersion": 8,
+  "seeds": [
+    "spread-1",
+    "spread-2",
+    "spread-3",
+    "spread-4",
+    "spread-5"
+  ],
+  "results": [
+    {
+      "variant": "ALL ON (baseline)",
+      "seed": "spread-2",
+      "marginCents": 679417,
+      "onTimeShare": 0.9647058823529412,
+      "wonOrders": 170,
+      "ranked": true
+    },
+    {
+      "variant": "ALL ON (baseline)",
+      "seed": "spread-3",
+      "marginCents": 239532,
+      "onTimeShare": 0.9529411764705882,
+      "wonOrders": 85,
+      "ranked": true
+    },
+    {
+      "variant": "ALL ON (baseline)",
+      "seed": "spread-4",
+      "marginCents": 1122565,
+      "onTimeShare": 0.94921875,
+      "wonOrders": 256,
+      "ranked": true
+    },
+    {
+      "variant": "ALL ON (baseline)",
+      "seed": "spread-5",
+      "marginCents": 726762,
+      "onTimeShare": 0.9479166666666666,
+      "wonOrders": 192,
+      "ranked": true
+    },
+    {
+      "variant": "ALL ON (baseline)",
+      "seed": "spread-1",
+      "marginCents": 880331,
+      "onTimeShare": 0.9525547445255474,
+      "wonOrders": 274,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: selectiveDecline",
+      "seed": "spread-1",
+      "marginCents": 920454,
+      "onTimeShare": 0.94375,
+      "wonOrders": 320,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: selectiveDecline",
+      "seed": "spread-2",
+      "marginCents": 760031,
+      "onTimeShare": 0.9675675675675676,
+      "wonOrders": 185,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: selectiveDecline",
+      "seed": "spread-3",
+      "marginCents": 268922,
+      "onTimeShare": 0.967032967032967,
+      "wonOrders": 91,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: selectiveDecline",
+      "seed": "spread-4",
+      "marginCents": 924775,
+      "onTimeShare": 0.9158249158249159,
+      "wonOrders": 297,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: selectiveDecline",
+      "seed": "spread-5",
+      "marginCents": 722857,
+      "onTimeShare": 0.9203539823008849,
+      "wonOrders": 226,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: optionSteering",
+      "seed": "spread-1",
+      "marginCents": 808425,
+      "onTimeShare": 0.9438596491228071,
+      "wonOrders": 285,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: optionSteering",
+      "seed": "spread-2",
+      "marginCents": 608887,
+      "onTimeShare": 0.9392265193370166,
+      "wonOrders": 181,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: optionSteering",
+      "seed": "spread-3",
+      "marginCents": 270588,
+      "onTimeShare": 0.9705882352941176,
+      "wonOrders": 102,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: optionSteering",
+      "seed": "spread-4",
+      "marginCents": 1011874,
+      "onTimeShare": 0.9125475285171103,
+      "wonOrders": 263,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: optionSteering",
+      "seed": "spread-5",
+      "marginCents": 778150,
+      "onTimeShare": 0.9447236180904522,
+      "wonOrders": 199,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: flatFees",
+      "seed": "spread-1",
+      "marginCents": 475973,
+      "onTimeShare": 0.9525547445255474,
+      "wonOrders": 274,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: flatFees",
+      "seed": "spread-2",
+      "marginCents": 503906,
+      "onTimeShare": 0.9828571428571429,
+      "wonOrders": 175,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: flatFees",
+      "seed": "spread-3",
+      "marginCents": 71285,
+      "onTimeShare": 0.9540229885057471,
+      "wonOrders": 87,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: flatFees",
+      "seed": "spread-4",
+      "marginCents": 591563,
+      "onTimeShare": 0.966542750929368,
+      "wonOrders": 269,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: flatFees",
+      "seed": "spread-5",
+      "marginCents": 400380,
+      "onTimeShare": 0.9753694581280788,
+      "wonOrders": 203,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: repositionOffers",
+      "seed": "spread-3",
+      "marginCents": 239532,
+      "onTimeShare": 0.9529411764705882,
+      "wonOrders": 85,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: repositionOffers",
+      "seed": "spread-2",
+      "marginCents": 674900,
+      "onTimeShare": 0.9647058823529412,
+      "wonOrders": 170,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: repositionOffers",
+      "seed": "spread-1",
+      "marginCents": 880684,
+      "onTimeShare": 0.9525547445255474,
+      "wonOrders": 274,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: repositionOffers",
+      "seed": "spread-4",
+      "marginCents": 1100758,
+      "onTimeShare": 0.9455252918287937,
+      "wonOrders": 257,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: repositionOffers",
+      "seed": "spread-5",
+      "marginCents": 726762,
+      "onTimeShare": 0.9479166666666666,
+      "wonOrders": 192,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: noteNLP",
+      "seed": "spread-1",
+      "marginCents": 747570,
+      "onTimeShare": 0.9433962264150944,
+      "wonOrders": 265,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: noteNLP",
+      "seed": "spread-2",
+      "marginCents": 659516,
+      "onTimeShare": 0.9532163742690059,
+      "wonOrders": 171,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: noteNLP",
+      "seed": "spread-4",
+      "marginCents": 963132,
+      "onTimeShare": 0.9425287356321839,
+      "wonOrders": 261,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: noteNLP",
+      "seed": "spread-5",
+      "marginCents": 559491,
+      "onTimeShare": 0.9296482412060302,
+      "wonOrders": 199,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: noteNLP",
+      "seed": "spread-3",
+      "marginCents": 115208,
+      "onTimeShare": 0.9125,
+      "wonOrders": 80,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: dealerLearning",
+      "seed": "spread-3",
+      "marginCents": 136133,
+      "onTimeShare": 0.9558823529411765,
+      "wonOrders": 68,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: dealerLearning",
+      "seed": "spread-2",
+      "marginCents": 634148,
+      "onTimeShare": 0.9515151515151515,
+      "wonOrders": 165,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: dealerLearning",
+      "seed": "spread-1",
+      "marginCents": 770402,
+      "onTimeShare": 0.9345794392523364,
+      "wonOrders": 321,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: dealerLearning",
+      "seed": "spread-4",
+      "marginCents": 910356,
+      "onTimeShare": 0.9267515923566879,
+      "wonOrders": 314,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: dealerLearning",
+      "seed": "spread-5",
+      "marginCents": 622085,
+      "onTimeShare": 0.9441624365482234,
+      "wonOrders": 197,
+      "ranked": true
+    },
+    {
+      "variant": "ON: chainGigs",
+      "seed": "spread-1",
+      "marginCents": 861078,
+      "onTimeShare": 0.9444444444444444,
+      "wonOrders": 270,
+      "ranked": true
+    },
+    {
+      "variant": "ON: chainGigs",
+      "seed": "spread-2",
+      "marginCents": 653697,
+      "onTimeShare": 0.9444444444444444,
+      "wonOrders": 162,
+      "ranked": true
+    },
+    {
+      "variant": "ON: chainGigs",
+      "seed": "spread-5",
+      "marginCents": 640590,
+      "onTimeShare": 0.9030612244897959,
+      "wonOrders": 196,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: slackFees",
+      "seed": "spread-1",
+      "marginCents": 529448,
+      "onTimeShare": 0.9444444444444444,
+      "wonOrders": 270,
+      "ranked": true
+    },
+    {
+      "variant": "ON: chainGigs",
+      "seed": "spread-4",
+      "marginCents": 660472,
+      "onTimeShare": 0.8849206349206349,
+      "wonOrders": 252,
+      "ranked": false
+    },
+    {
+      "variant": "ON: chainGigs",
+      "seed": "spread-3",
+      "marginCents": 215762,
+      "onTimeShare": 0.9647058823529412,
+      "wonOrders": 85,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: slackFees",
+      "seed": "spread-3",
+      "marginCents": 136625,
+      "onTimeShare": 0.9534883720930233,
+      "wonOrders": 86,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: slackFees",
+      "seed": "spread-4",
+      "marginCents": 717686,
+      "onTimeShare": 0.952755905511811,
+      "wonOrders": 254,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: slackFees",
+      "seed": "spread-5",
+      "marginCents": 537948,
+      "onTimeShare": 0.970873786407767,
+      "wonOrders": 206,
+      "ranked": true
+    },
+    {
+      "variant": "OFF: slackFees",
+      "seed": "spread-2",
+      "marginCents": 537144,
+      "onTimeShare": 0.9767441860465116,
+      "wonOrders": 172,
+      "ranked": true
+    }
+  ]
+}

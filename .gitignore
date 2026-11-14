@@ -1,0 +1,19 @@
+# Environment variables & secrets (NEVER commit SPREAD_KEY or GEMINI_API_KEY)
+.env
+.env.*
+.env*
+!.env.example
+
+# Dependencies & runtimes
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# Logs, state & simulation dumps
+reveal-*/
+*.log
+.DS_Store
+data/runs.json
+node_modules/
+.env

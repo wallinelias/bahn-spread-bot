@@ -1,0 +1,71 @@
+[
+  {
+    "timestamp": "2026-11-13T23:13:33.664Z",
+    "candidateName": "Baseline Strategy v10",
+    "passed": false,
+    "violations": [
+      "Average margin (€6520.62/wk) does not beat champion gate (€7282.12/wk, delta: €-761.50/wk)."
+    ],
+    "totalMarginEur": 32603.09,
+    "avgMarginEur": 6520.62,
+    "avgOnTimeShare": 0.9594,
+    "minOnTimeShare": 0.9479,
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 7391.02,
+        "onTimeShare": 0.9522,
+        "wonOrders": 272,
+        "winRate": 0.3269,
+        "gigDrops": 31,
+        "lateDeliveries": 9,
+        "deadlineWarnings": 29,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 6566.77,
+        "onTimeShare": 0.9651,
+        "wonOrders": 172,
+        "winRate": 0.2043,
+        "gigDrops": 11,
+        "lateDeliveries": 5,
+        "deadlineWarnings": 11,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": 2439.56,
+        "onTimeShare": 0.9663,
+        "wonOrders": 89,
+        "winRate": 0.1117,
+        "gigDrops": 11,
+        "lateDeliveries": 3,
+        "deadlineWarnings": 7,
+        "ranked": true
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 10392.45,
+        "onTimeShare": 0.9653,
+        "wonOrders": 259,
+        "winRate": 0.3205,
+        "gigDrops": 37,
+        "lateDeliveries": 6,
+        "deadlineWarnings": 16,
+        "ranked": true
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 5813.29,
+        "onTimeShare": 0.9479,
+        "wonOrders": 192,
+        "winRate": 0.2272,
+        "gigDrops": 26,
+        "lateDeliveries": 8,
+        "deadlineWarnings": 9,
+        "ranked": true
+      }
+    ]
+  }
+]

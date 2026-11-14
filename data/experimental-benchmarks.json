@@ -1,0 +1,304 @@
+[
+  {
+    "name": "Strategy v8 Baseline",
+    "toggles": {},
+    "seeds": [
+      "spread-1",
+      "spread-2",
+      "spread-3",
+      "spread-4",
+      "spread-5"
+    ],
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 8808.18,
+        "onTimeShare": 0.9562,
+        "wonOrders": 274,
+        "winRate": 0.3297,
+        "gigDrops": 26,
+        "lateDeliveries": 9,
+        "deadlineWarnings": 28,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 6592.17,
+        "onTimeShare": 0.9645,
+        "wonOrders": 169,
+        "winRate": 0.2012,
+        "gigDrops": 20,
+        "lateDeliveries": 5,
+        "deadlineWarnings": 13,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": 2417.83,
+        "onTimeShare": 0.9529,
+        "wonOrders": 85,
+        "winRate": 0.11,
+        "gigDrops": 13,
+        "lateDeliveries": 4,
+        "deadlineWarnings": 6,
+        "ranked": true
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 11033.61,
+        "onTimeShare": 0.9453,
+        "wonOrders": 256,
+        "winRate": 0.3188,
+        "gigDrops": 36,
+        "lateDeliveries": 13,
+        "deadlineWarnings": 29,
+        "ranked": true
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 7300.07,
+        "onTimeShare": 0.9479,
+        "wonOrders": 192,
+        "winRate": 0.227,
+        "gigDrops": 26,
+        "lateDeliveries": 9,
+        "deadlineWarnings": 8,
+        "ranked": true
+      }
+    ],
+    "avgMarginEur": 7230.37,
+    "totalMarginEur": 36151.86,
+    "avgOnTimeShare": 0.9534,
+    "minOnTimeShare": 0.9453,
+    "avgWonOrders": 195.2,
+    "allRanked": true
+  },
+  {
+    "name": "Strategy 1: Dynamic Corridors",
+    "toggles": {
+      "dynamicCorridors": true
+    },
+    "seeds": [
+      "spread-1",
+      "spread-2",
+      "spread-3",
+      "spread-4",
+      "spread-5"
+    ],
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 6980.34,
+        "onTimeShare": 0.9201,
+        "wonOrders": 288,
+        "winRate": 0.3745,
+        "gigDrops": 39,
+        "lateDeliveries": 18,
+        "deadlineWarnings": 62,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 7051.85,
+        "onTimeShare": 0.9635,
+        "wonOrders": 219,
+        "winRate": 0.2687,
+        "gigDrops": 11,
+        "lateDeliveries": 7,
+        "deadlineWarnings": 31,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": 1690.58,
+        "onTimeShare": 0.9596,
+        "wonOrders": 99,
+        "winRate": 0.1354,
+        "gigDrops": 5,
+        "lateDeliveries": 3,
+        "deadlineWarnings": 14,
+        "ranked": true
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 8472.68,
+        "onTimeShare": 0.9153,
+        "wonOrders": 307,
+        "winRate": 0.3767,
+        "gigDrops": 38,
+        "lateDeliveries": 24,
+        "deadlineWarnings": 57,
+        "ranked": true
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 4488.83,
+        "onTimeShare": 0.9138,
+        "wonOrders": 232,
+        "winRate": 0.2937,
+        "gigDrops": 29,
+        "lateDeliveries": 12,
+        "deadlineWarnings": 37,
+        "ranked": true
+      }
+    ],
+    "avgMarginEur": 5736.86,
+    "totalMarginEur": 28684.28,
+    "avgOnTimeShare": 0.9345,
+    "minOnTimeShare": 0.9138,
+    "avgWonOrders": 229,
+    "allRanked": true
+  },
+  {
+    "name": "Strategy 2: Elastic Dealer Pricing",
+    "toggles": {
+      "elasticDealer": true
+    },
+    "seeds": [
+      "spread-1",
+      "spread-2",
+      "spread-3",
+      "spread-4",
+      "spread-5"
+    ],
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 8113.76,
+        "onTimeShare": 0.9665,
+        "wonOrders": 269,
+        "winRate": 0.3257,
+        "gigDrops": 33,
+        "lateDeliveries": 6,
+        "deadlineWarnings": 23,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 7296.15,
+        "onTimeShare": 0.9714,
+        "wonOrders": 175,
+        "winRate": 0.2073,
+        "gigDrops": 15,
+        "lateDeliveries": 4,
+        "deadlineWarnings": 11,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": 2682.96,
+        "onTimeShare": 0.9505,
+        "wonOrders": 101,
+        "winRate": 0.1263,
+        "gigDrops": 11,
+        "lateDeliveries": 5,
+        "deadlineWarnings": 11,
+        "ranked": true
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 10974.84,
+        "onTimeShare": 0.9363,
+        "wonOrders": 267,
+        "winRate": 0.3292,
+        "gigDrops": 34,
+        "lateDeliveries": 15,
+        "deadlineWarnings": 34,
+        "ranked": true
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 7033.36,
+        "onTimeShare": 0.9333,
+        "wonOrders": 195,
+        "winRate": 0.2333,
+        "gigDrops": 23,
+        "lateDeliveries": 11,
+        "deadlineWarnings": 11,
+        "ranked": true
+      }
+    ],
+    "avgMarginEur": 7220.21,
+    "totalMarginEur": 36101.07,
+    "avgOnTimeShare": 0.9516,
+    "minOnTimeShare": 0.9333,
+    "avgWonOrders": 201.4,
+    "allRanked": true
+  },
+  {
+    "name": "Strategy 3: Adaptive Emergency Surge",
+    "toggles": {
+      "emergencySurge": true
+    },
+    "seeds": [
+      "spread-1",
+      "spread-2",
+      "spread-3",
+      "spread-4",
+      "spread-5"
+    ],
+    "seedResults": [
+      {
+        "seed": "spread-1",
+        "marginEur": 8044.95,
+        "onTimeShare": 0.9487,
+        "wonOrders": 273,
+        "winRate": 0.3285,
+        "gigDrops": 28,
+        "lateDeliveries": 11,
+        "deadlineWarnings": 29,
+        "ranked": true
+      },
+      {
+        "seed": "spread-2",
+        "marginEur": 6325.43,
+        "onTimeShare": 0.9586,
+        "wonOrders": 169,
+        "winRate": 0.2012,
+        "gigDrops": 17,
+        "lateDeliveries": 6,
+        "deadlineWarnings": 12,
+        "ranked": true
+      },
+      {
+        "seed": "spread-3",
+        "marginEur": 2243.69,
+        "onTimeShare": 0.9647,
+        "wonOrders": 85,
+        "winRate": 0.11,
+        "gigDrops": 9,
+        "lateDeliveries": 3,
+        "deadlineWarnings": 7,
+        "ranked": true
+      },
+      {
+        "seed": "spread-4",
+        "marginEur": 8105.31,
+        "onTimeShare": 0.9294,
+        "wonOrders": 255,
+        "winRate": 0.3172,
+        "gigDrops": 39,
+        "lateDeliveries": 17,
+        "deadlineWarnings": 39,
+        "ranked": true
+      },
+      {
+        "seed": "spread-5",
+        "marginEur": 6962.75,
+        "onTimeShare": 0.9427,
+        "wonOrders": 192,
+        "winRate": 0.227,
+        "gigDrops": 27,
+        "lateDeliveries": 10,
+        "deadlineWarnings": 14,
+        "ranked": true
+      }
+    ],
+    "avgMarginEur": 6336.43,
+    "totalMarginEur": 31682.13,
+    "avgOnTimeShare": 0.9488,
+    "minOnTimeShare": 0.9294,
+    "avgWonOrders": 194.8,
+    "allRanked": true
+  }
+]

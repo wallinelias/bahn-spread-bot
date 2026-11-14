@@ -1,0 +1,74 @@
+{
+  "strategyVersion": 15,
+  "verifiedAt": "2026-11-14T11:54:00.000Z",
+  "description": "True Strategy v8 + 2c Champion (q=1.46, f=1.00/1.34/1.75/2.20/0.14, escalateStart=now+60, no non-urgent offer spam, no cold-start prior)",
+  "totalMarginEur": 37274.45,
+  "avgMarginEur": 7454.89,
+  "avgOnTimeShare": 0.9548,
+  "minOnTimeShare": 0.935,
+  "allRanked": true,
+  "seeds": [
+    "spread-1",
+    "spread-2",
+    "spread-3",
+    "spread-4",
+    "spread-5"
+  ],
+  "results": [
+    {
+      "seed": "spread-1",
+      "marginEur": 8045.63,
+      "marginCents": 804563,
+      "onTimeShare": 0.9462,
+      "wonOrders": 279,
+      "winRate": 0.325,
+      "gigDrops": 35,
+      "lateDeliveries": 13,
+      "ranked": true
+    },
+    {
+      "seed": "spread-2",
+      "marginEur": 7138.88,
+      "marginCents": 713888,
+      "onTimeShare": 0.9714,
+      "wonOrders": 175,
+      "winRate": 0.199,
+      "gigDrops": 18,
+      "lateDeliveries": 4,
+      "ranked": true
+    },
+    {
+      "seed": "spread-3",
+      "marginEur": 3187.4,
+      "marginCents": 318740,
+      "onTimeShare": 0.97,
+      "wonOrders": 100,
+      "winRate": 0.114,
+      "gigDrops": 8,
+      "lateDeliveries": 3,
+      "ranked": true
+    },
+    {
+      "seed": "spread-4",
+      "marginEur": 11176.46,
+      "marginCents": 1117646,
+      "onTimeShare": 0.9346,
+      "wonOrders": 260,
+      "winRate": 0.323,
+      "gigDrops": 35,
+      "lateDeliveries": 16,
+      "ranked": true
+    },
+    {
+      "seed": "spread-5",
+      "marginEur": 7726.08,
+      "marginCents": 772608,
+      "onTimeShare": 0.9515,
+      "wonOrders": 206,
+      "winRate": 0.235,
+      "gigDrops": 25,
+      "lateDeliveries": 8,
+      "ranked": true
+    }
+  ]
+}

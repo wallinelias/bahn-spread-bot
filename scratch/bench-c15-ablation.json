@@ -1,0 +1,224 @@
+{
+  "K1_Hybrid": {
+    "label": "Exact v21/C6 + ONLY HybridMarginFilter (€14/12%, No Priors, Old Fee)",
+    "totalMarginEur": 22417.89,
+    "avgMarginEur": 7472.63,
+    "avgOnTimeShare": 0.9211,
+    "minOnTimeShare": 0.8885,
+    "allRanked": false,
+    "totalWon": 895,
+    "totalDrops": 108,
+    "rows": [
+      {
+        "variant": "K1_Hybrid",
+        "seed": "spread-1",
+        "marginEur": 9175.29,
+        "revEur": 33190.6,
+        "wonOrders": 328,
+        "onTimeShare": 0.9543,
+        "ranked": true,
+        "gigDrops": 37,
+        "lateDeliveries": 14,
+        "visitFailures": {},
+        "lateRefundEur": 512.55
+      },
+      {
+        "variant": "K1_Hybrid",
+        "seed": "spread-4",
+        "marginEur": 9588.5,
+        "revEur": 41171.64,
+        "wonOrders": 289,
+        "onTimeShare": 0.9204,
+        "ranked": true,
+        "gigDrops": 33,
+        "lateDeliveries": 23,
+        "visitFailures": {
+          "closed": 1
+        },
+        "lateRefundEur": 1330.29
+      },
+      {
+        "variant": "K1_Hybrid",
+        "seed": "spread-5",
+        "marginEur": 3654.1,
+        "revEur": 36735.14,
+        "wonOrders": 278,
+        "onTimeShare": 0.8885,
+        "ranked": false,
+        "gigDrops": 38,
+        "lateDeliveries": 29,
+        "visitFailures": {
+          "closed": 1
+        },
+        "lateRefundEur": 1962.08
+      }
+    ]
+  },
+  "K2_Fee22h": {
+    "label": "Exact v21/C6 + ONLY BroadFeeTiers (0.88@22h / 0.94@14h @ 3+ drivers)",
+    "totalMarginEur": 24858.53,
+    "avgMarginEur": 8286.18,
+    "avgOnTimeShare": 0.922,
+    "minOnTimeShare": 0.9097,
+    "allRanked": true,
+    "totalWon": 886,
+    "totalDrops": 113,
+    "rows": [
+      {
+        "variant": "K2_Fee22h",
+        "seed": "spread-1",
+        "marginEur": 9505.24,
+        "revEur": 32344.05,
+        "wonOrders": 330,
+        "onTimeShare": 0.9303,
+        "ranked": true,
+        "gigDrops": 37,
+        "lateDeliveries": 23,
+        "visitFailures": {},
+        "lateRefundEur": 651.89
+      },
+      {
+        "variant": "K2_Fee22h",
+        "seed": "spread-4",
+        "marginEur": 9012.43,
+        "revEur": 42005.34,
+        "wonOrders": 299,
+        "onTimeShare": 0.9097,
+        "ranked": true,
+        "gigDrops": 42,
+        "lateDeliveries": 27,
+        "visitFailures": {
+          "closed": 8
+        },
+        "lateRefundEur": 1735.17
+      },
+      {
+        "variant": "K2_Fee22h",
+        "seed": "spread-5",
+        "marginEur": 6340.86,
+        "revEur": 32246.59,
+        "wonOrders": 257,
+        "onTimeShare": 0.9261,
+        "ranked": true,
+        "gigDrops": 34,
+        "lateDeliveries": 19,
+        "visitFailures": {
+          "no_plates": 1
+        },
+        "lateRefundEur": 1000.65
+      }
+    ]
+  },
+  "K3_PosPriors": {
+    "label": "Exact v21/C6 + ONLY Positive Structural Priors (boost>0 only)",
+    "totalMarginEur": 26818.84,
+    "avgMarginEur": 8939.61,
+    "avgOnTimeShare": 0.9359,
+    "minOnTimeShare": 0.9108,
+    "allRanked": true,
+    "totalWon": 894,
+    "totalDrops": 102,
+    "rows": [
+      {
+        "variant": "K3_PosPriors",
+        "seed": "spread-1",
+        "marginEur": 9819.98,
+        "revEur": 33603.46,
+        "wonOrders": 335,
+        "onTimeShare": 0.9522,
+        "ranked": true,
+        "gigDrops": 43,
+        "lateDeliveries": 15,
+        "visitFailures": {
+          "closed": 1
+        },
+        "lateRefundEur": 682.87
+      },
+      {
+        "variant": "K3_PosPriors",
+        "seed": "spread-4",
+        "marginEur": 11721.1,
+        "revEur": 40660.39,
+        "wonOrders": 290,
+        "onTimeShare": 0.9448,
+        "ranked": true,
+        "gigDrops": 29,
+        "lateDeliveries": 16,
+        "visitFailures": {
+          "closed": 2
+        },
+        "lateRefundEur": 811.57
+      },
+      {
+        "variant": "K3_PosPriors",
+        "seed": "spread-5",
+        "marginEur": 5277.76,
+        "revEur": 34674.12,
+        "wonOrders": 269,
+        "onTimeShare": 0.9108,
+        "ranked": true,
+        "gigDrops": 30,
+        "lateDeliveries": 24,
+        "visitFailures": {
+          "closed": 1
+        },
+        "lateRefundEur": 1721.11
+      }
+    ]
+  },
+  "K4_C9SafeDay3": {
+    "label": "Exact C9 + ScarcityGated + maxChainStartDay=3 (Mon-Thu chains)",
+    "totalMarginEur": 27237.8,
+    "avgMarginEur": 9079.27,
+    "avgOnTimeShare": 0.936,
+    "minOnTimeShare": 0.9028,
+    "allRanked": true,
+    "totalWon": 908,
+    "totalDrops": 105,
+    "rows": [
+      {
+        "variant": "K4_C9SafeDay3",
+        "seed": "spread-1",
+        "marginEur": 10376.22,
+        "revEur": 31512.03,
+        "wonOrders": 325,
+        "onTimeShare": 0.9662,
+        "ranked": true,
+        "gigDrops": 33,
+        "lateDeliveries": 11,
+        "visitFailures": {
+          "closed": 1
+        },
+        "lateRefundEur": 460.28
+      },
+      {
+        "variant": "K4_C9SafeDay3",
+        "seed": "spread-4",
+        "marginEur": 11391.59,
+        "revEur": 40532.33,
+        "wonOrders": 295,
+        "onTimeShare": 0.939,
+        "ranked": true,
+        "gigDrops": 38,
+        "lateDeliveries": 18,
+        "visitFailures": {
+          "closed": 4
+        },
+        "lateRefundEur": 1023.86
+      },
+      {
+        "variant": "K4_C9SafeDay3",
+        "seed": "spread-5",
+        "marginEur": 5469.99,
+        "revEur": 36637.62,
+        "wonOrders": 288,
+        "onTimeShare": 0.9028,
+        "ranked": true,
+        "gigDrops": 34,
+        "lateDeliveries": 27,
+        "visitFailures": {},
+        "lateRefundEur": 1663.69
+      }
+    ]
+  }
+}

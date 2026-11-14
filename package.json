@@ -1,0 +1,21 @@
+{
+  "name": "spread-quant-bot",
+  "version": "2.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Autonomous Quantitative Dispatch Engine + Gemini 4 Hydrogen Self-Tuning Strategist for Bahn Express Spread (Junction 2026)",
+  "scripts": {
+    "start": "node --env-file=.env server.ts",
+    "dashboard": "node --env-file=.env server.ts",
+    "bot": "node --env-file=.env bot.ts",
+    "sweep": "node --env-file=.env auto-trainer.ts --sweep 3",
+    "board": "node --env-file=.env bot.ts --level 8 --board",
+    "board-all": "node --env-file=.env auto-trainer.ts --board-round",
+    "autopilot": "node --env-file=.env autopilot.ts",
+    "final": "node --env-file=.env bot.ts --final",
+    "starter": "node --env-file=.env starter.ts"
+  },
+  "dependencies": {
+    "@google/genai": "^3.3.0"
+  }
+}

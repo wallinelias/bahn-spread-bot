@@ -1,0 +1,122 @@
+{
+  "tag": "C1",
+  "preset": {
+    "name": "C1_A5_plus_patientMorningHoldout",
+    "pricerPatch": {
+      "softCapacitySurge": true,
+      "adverseSelectionGuard": true,
+      "patientMorningHoldout": true,
+      "minQuoteMultiplier": 1.22,
+      "worldBaseMuFloor": 1.2
+    },
+    "chainGigs": false
+  },
+  "seeds": [
+    "spread-4",
+    "spread-5"
+  ],
+  "totalMarginEur": 16125.05,
+  "avgMarginEur": 8062.52,
+  "minOnTimePct": 90.08,
+  "ranked": "2/2",
+  "results": [
+    {
+      "seed": "spread-4",
+      "marginEur": 10322.98,
+      "onTimeShare": 0.9176029962546817,
+      "wonOrders": 267,
+      "ranked": true,
+      "lateApprox": 22,
+      "telemetry": {
+        "totalRequests": 1035,
+        "quotedToWin": 722,
+        "declinedHighQuote": 313,
+        "wonOrders": 268,
+        "lostOrders": 767,
+        "winRateAll": 0.2589371980676328,
+        "winRateTargeted": 0.37119113573407203,
+        "totalGigsPosted": 301,
+        "totalGigsBooked": 312,
+        "totalDirectOffers": 796,
+        "acceptedDirectOffers": 9,
+        "gigDrops": 38,
+        "noShows": 1,
+        "visitFailures": {
+          "not_ready": 1,
+          "closed": 4
+        },
+        "deadlineWarnings": 41,
+        "lateDeliveries": 22,
+        "onTimeDeliveries": 245,
+        "ledgerBreakdownCents": {
+          "revenue": 3292585,
+          "driver_fee": -2144937,
+          "failed_visit": -24858,
+          "late_refund": -90492
+        }
+      },
+      "chainStats": {
+        "chainedGigsPosted": 0,
+        "chained2CarPosted": 0,
+        "chained3CarPosted": 0,
+        "periodicConsolidations": 0,
+        "chainSplitsOnUrgent": 0,
+        "chainSplitsOnExpire": 0,
+        "chainSplitsOnDrop": 0,
+        "chainSplitsOnCancel": 0,
+        "rejectedChainPosts": 0,
+        "quoteSynergyHits": 0
+      }
+    },
+    {
+      "seed": "spread-5",
+      "marginEur": 5802.07,
+      "onTimeShare": 0.9007633587786259,
+      "wonOrders": 262,
+      "ranked": true,
+      "lateApprox": 26,
+      "telemetry": {
+        "totalRequests": 1035,
+        "quotedToWin": 736,
+        "declinedHighQuote": 299,
+        "wonOrders": 263,
+        "lostOrders": 772,
+        "winRateAll": 0.2541062801932367,
+        "winRateTargeted": 0.35733695652173914,
+        "totalGigsPosted": 296,
+        "totalGigsBooked": 296,
+        "totalDirectOffers": 639,
+        "acceptedDirectOffers": 3,
+        "gigDrops": 28,
+        "noShows": 1,
+        "visitFailures": {
+          "closed": 3
+        },
+        "deadlineWarnings": 47,
+        "lateDeliveries": 25,
+        "onTimeDeliveries": 236,
+        "ledgerBreakdownCents": {
+          "revenue": 2885034,
+          "driver_fee": -2111801,
+          "waiting": -9000,
+          "late_refund": -144733,
+          "fine": -10000,
+          "failed_visit": -22705,
+          "undelivered_penalty": -6588
+        }
+      },
+      "chainStats": {
+        "chainedGigsPosted": 0,
+        "chained2CarPosted": 0,
+        "chained3CarPosted": 0,
+        "periodicConsolidations": 0,
+        "chainSplitsOnUrgent": 0,
+        "chainSplitsOnExpire": 0,
+        "chainSplitsOnDrop": 0,
+        "chainSplitsOnCancel": 0,
+        "rejectedChainPosts": 0,
+        "quoteSynergyHits": 0
+      }
+    }
+  ]
+}
