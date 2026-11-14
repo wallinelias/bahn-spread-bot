@@ -56,6 +56,20 @@ const candidate: StrategyConfig = {
   scarcityTownFeeBoost: 0.14,
   directOfferDiscount: 1.015,
   targetOnTimeBuffer: 0.935,
+  pricerOptions: {
+    ...(base.pricerOptions ?? {}),
+    strictCapacityGate: true,
+    minQuoteMultiplier: 1.22,
+    worldBaseMuFloor: 1.2,
+    softCapacitySurge: true,
+    adverseSelectionGuard: true,
+    cleanAdverseGuard: true,
+    smartDirectOffers: false,
+    slaRegimeControl: true,
+    dealerShadowPricing: false,
+    fortressRescueEnabled: false,
+    smartDirectOffersV2: true,
+  },
 }
 
 const realLog = console.log

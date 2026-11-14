@@ -1,0 +1,156 @@
+{
+  "tag": "TF3",
+  "candidate": {
+    "version": 23,
+    "updatedAt": "2026-11-14T16:36:00.000Z",
+    "updatedBy": "manual",
+    "flags": {
+      "selectiveDecline": true,
+      "optionSteering": true,
+      "flatFees": true,
+      "repositionOffers": true,
+      "noteNLP": true,
+      "dealerLearning": true,
+      "chainGigs": false,
+      "slackFees": true
+    },
+    "baseQuoteMultiplier": 1.42,
+    "sameDayQuotePremium": 0.25,
+    "minExpectedMarginRatio": 0.19,
+    "targetWinRate": 0.32,
+    "maxActiveWaitingPerDriver": 0.41,
+    "maxOrdersPerBatch": 5,
+    "baseFeeMultiplier": 1.05,
+    "maxNormalFeeMultiplier": 1.36,
+    "urgentFeeMultiplier": 1.75,
+    "maxUrgentFeeMultiplier": 2.2,
+    "scarcityTownFeeBoost": 0.14,
+    "directOfferDiscount": 1.015,
+    "targetOnTimeBuffer": 0.935,
+    "pricerOptions": {
+      "strictCapacityGate": true,
+      "minQuoteMultiplier": 1.22,
+      "worldBaseMuFloor": 1.2,
+      "softCapacitySurge": true,
+      "adverseSelectionGuard": true,
+      "cleanAdverseGuard": true,
+      "smartDirectOffers": false,
+      "slaRegimeControl": true,
+      "dealerShadowPricing": false,
+      "fortressRescueEnabled": false,
+      "smartDirectOffersV2": true
+    },
+    "reasoningSummary": "Promoted F3 Champion (v23): Top10IntegratedDesk with BayesianCompetitorPricer (1.22/1.20 floor + softCapacitySurge + cleanAdverseGuard), Dual-Regime Intra-Week SLA Controller (FORTRESS/BALANCED/HARVEST), ZeroHoldoutFeeScheduler + smartDirectOffersV2; verified 5/5 RANKED across spread-1..5 (€38,086.58, minOT 94.22%, avgOT 95.48%)."
+  },
+  "results": [
+    {
+      "seed": "spread-1",
+      "worldId": "waeac11d4063dfefaffb9",
+      "marginEur": 9733.88,
+      "onTimeShare": 0.951,
+      "ranked": true,
+      "won": 367,
+      "declined": 219,
+      "revEur": 32746.24,
+      "feeEur": 22381.31,
+      "feePctRev": 68.35,
+      "lateRefEur": 545.38,
+      "offersAcc": 6,
+      "offersTot": 610,
+      "offerConvPct": 0.98,
+      "drops": 45,
+      "lateDeliveries": 18,
+      "visitFailures": {
+        "licence": 1
+      }
+    },
+    {
+      "seed": "spread-2",
+      "worldId": "w9e389e64661f20cd07f6",
+      "marginEur": 7582.77,
+      "onTimeShare": 0.9767,
+      "ranked": true,
+      "won": 258,
+      "declined": 286,
+      "revEur": 25431.83,
+      "feeEur": 17459.99,
+      "feePctRev": 68.65,
+      "lateRefEur": 164.62,
+      "offersAcc": 3,
+      "offersTot": 142,
+      "offerConvPct": 2.11,
+      "drops": 19,
+      "lateDeliveries": 6,
+      "visitFailures": {
+        "not_ready": 2,
+        "closed": 2
+      }
+    },
+    {
+      "seed": "spread-3",
+      "worldId": "wa237b822b4a838c5219a",
+      "marginEur": 2956.49,
+      "onTimeShare": 0.9461,
+      "ranked": true,
+      "won": 167,
+      "declined": 436,
+      "revEur": 16080.91,
+      "feeEur": 12347.03,
+      "feePctRev": 76.78,
+      "lateRefEur": 639.91,
+      "offersAcc": 3,
+      "offersTot": 235,
+      "offerConvPct": 1.28,
+      "drops": 18,
+      "lateDeliveries": 9,
+      "visitFailures": {
+        "closed": 3
+      }
+    },
+    {
+      "seed": "spread-4",
+      "worldId": "wb91d9c5e3b994796a031",
+      "marginEur": 11430.53,
+      "onTimeShare": 0.943,
+      "ranked": true,
+      "won": 316,
+      "declined": 221,
+      "revEur": 40138.78,
+      "feeEur": 27340.02,
+      "feePctRev": 68.11,
+      "lateRefEur": 1219.35,
+      "offersAcc": 2,
+      "offersTot": 571,
+      "offerConvPct": 0.35,
+      "drops": 41,
+      "lateDeliveries": 18,
+      "visitFailures": {
+        "closed": 2
+      }
+    },
+    {
+      "seed": "spread-5",
+      "worldId": "wd985e0cdc83522dc41be",
+      "marginEur": 4535.15,
+      "onTimeShare": 0.9281,
+      "ranked": true,
+      "won": 306,
+      "declined": 220,
+      "revEur": 34443.35,
+      "feeEur": 27506.87,
+      "feePctRev": 79.86,
+      "lateRefEur": 2127.54,
+      "offersAcc": 5,
+      "offersTot": 650,
+      "offerConvPct": 0.77,
+      "drops": 44,
+      "lateDeliveries": 20,
+      "visitFailures": {
+        "closed": 1
+      }
+    }
+  ],
+  "totalMargin": 36238.82,
+  "minOT": 0.9281,
+  "avgOT": 0.94898
+}

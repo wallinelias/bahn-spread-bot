@@ -252,6 +252,7 @@ export class BayesianCompetitorPricer {
   // Hierarchical Bayesian state for compQuote / listPrice
   private worldBaseMu: number
   private worldObsCount = 0
+  private worldWinCount = 0
   private readonly lanePosteriors = new Map<string, BayesianStat>()
   private readonly dealerStates = new Map<string, DealerState>()
   private readonly dayPosteriors = new Map<number, BayesianStat>()
@@ -686,7 +687,21 @@ export class BayesianCompetitorPricer {
         targetMult += this.config.sameDayQuotePremium
       }
 
-      const minQuoteMult = this.config.level >= 8 ? (this.config.minQuoteMultiplier ?? 1.22) : 1.05
+      const recentOutcomesCount = this.recentTargetedOutcomes.length
+      const recentWinShare =
+        recentOutcomesCount >= 10
+          ? this.recentTargetedOutcomes.filter(Boolean).length / recentOutcomesCount
+          : 1
+      const globalWinShare = this.worldObsCount >= 16 ? this.worldWinCount / this.worldObsCount : 1
+      const coldMarketIdle =
+        this.worldObsCount >= 16 &&
+        globalWinShare < 0.16 &&
+        recentOutcomesCount >= 10 &&
+        recentWinShare < 0.16 &&
+        onTimeHealthy &&
+        ctx.waitingCount < maxWaitingAllowed * 0.5
+      const minQuoteMult =
+        this.config.level >= 8 ? (coldMarketIdle ? 1.12 : (this.config.minQuoteMultiplier ?? 1.22)) : 1.05
       targetMult = Math.max(targetMult, minQuoteMult)
 
       const optCostFactor = !this.config.optionAwareFee
@@ -823,11 +838,33 @@ export class BayesianCompetitorPricer {
     // Bayesian gradient update: won -> evidence compPrice >= normMult; lost -> evidence compPrice < normMult
     const step = this.config.balancedBayesianDrift ? (won ? 0.026 : -0.014) : (won ? 0.022 : -0.018)
 
-    // 1. World base drift (adaptive fast early convergence with level-8 lower bound preventing losing-margin spirals)
+    // 1. World base drift (adaptive fast early convergence with cold-market adaptation when global+recent wins <16%)
     this.worldObsCount++
+    if (won) this.worldWinCount++
+    const recentWinShare =
+      this.recentTargetedOutcomes.length >= 10
+        ? this.recentTargetedOutcomes.filter(Boolean).length / this.recentTargetedOutcomes.length
+        : 1
+    const globalWinShare = this.worldObsCount >= 16 ? this.worldWinCount / this.worldObsCount : 1
+    const coldMarket =
+      this.worldObsCount >= 16 &&
+      globalWinShare < 0.16 &&
+      this.recentTargetedOutcomes.length >= 10 &&
+      recentWinShare < 0.16
     const worldGain = 1 / (2 + Math.min(25, this.worldObsCount * 0.35))
-    const worldStep = this.config.balancedBayesianDrift ? (won ? 0.052 : -0.028) : (won ? 0.045 : -0.04)
-    const worldFloor = this.config.level >= 8 ? (this.config.worldBaseMuFloor ?? 1.20) : 1.05
+    const worldStep = this.config.balancedBayesianDrift
+      ? won
+        ? 0.052
+        : coldMarket
+          ? -0.056
+          : -0.028
+      : won
+        ? 0.045
+        : coldMarket
+          ? -0.06
+          : -0.04
+    const baseWorldFloor = this.config.level >= 8 ? (this.config.worldBaseMuFloor ?? 1.20) : 1.05
+    const worldFloor = this.config.level >= 8 && coldMarket ? Math.min(baseWorldFloor, 1.10) : baseWorldFloor
     this.worldBaseMu = Math.max(worldFloor, Math.min(1.85, this.worldBaseMu + worldStep * worldGain))
 
     // 2. Lane posterior update
@@ -850,8 +887,40 @@ export class BayesianCompetitorPricer {
     this.dayPosteriors.set(rec.day, dayStat)
   }
 
+  /** Replay historical lost outcome for cold-market calibration during --final reconnect. */
+  observeHistoricalLoss(request: PriceRequest): void {
+    this.recentTargetedOutcomes.push(false)
+    if (this.recentTargetedOutcomes.length > 35) this.recentTargetedOutcomes.shift()
+    const dealer = this.getDealer(request.dealerId)
+    dealer.reqs++
+    dealer.obs++
+    const dealerGain = 1 / (3 + dealer.obs)
+    dealer.offset = Math.max(-0.25, Math.min(0.25, dealer.offset - 0.018 * dealerGain * 3.0))
+    const recentWinShare =
+      this.recentTargetedOutcomes.length >= 10
+        ? this.recentTargetedOutcomes.filter(Boolean).length / this.recentTargetedOutcomes.length
+        : 1
+    this.worldObsCount++
+    const globalWinShare = this.worldObsCount >= 16 ? this.worldWinCount / this.worldObsCount : 1
+    const coldMarket =
+      this.worldObsCount >= 16 &&
+      globalWinShare < 0.16 &&
+      this.recentTargetedOutcomes.length >= 10 &&
+      recentWinShare < 0.16
+    const worldFloor =
+      this.config.level >= 8 && coldMarket
+        ? 1.10
+        : (this.config.worldBaseMuFloor ?? 1.20)
+    const worldGain = 1 / (2 + Math.min(25, this.worldObsCount * 0.35))
+    const step = coldMarket ? -0.052 : -0.024
+    this.worldBaseMu = Math.max(worldFloor, this.worldBaseMu + step * worldGain)
+  }
+
   /** Replay a historical won order on WebSocket reconnect (--final). */
   observeHistoricalWin(request: PriceRequest, order: Order): void {
+    this.worldWinCount++
+    this.recentTargetedOutcomes.push(true)
+    if (this.recentTargetedOutcomes.length > 35) this.recentTargetedOutcomes.shift()
     const opt = request.options.find((o) => o.kind === order.option)
     if (!opt || opt.listPriceCents <= 0) return
     const mult = order.priceCents / opt.listPriceCents
@@ -3209,6 +3278,22 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
     return this.lastSlaState
   }
 
+  protected override isChainingSafeToStartNew(): { safe: boolean; maxCars: 2 | 3 | 4 | 5; quoteSynergySafe: boolean } {
+    const base = super.isChainingSafeToStartNew()
+    if (!base.safe) return base
+    const curDay = Math.floor(this.now / DAY)
+    const sla = this.pricer.config.slaRegimeControl ? this.getSlaRegime() : null
+    if (
+      curDay > 2 ||
+      this.liveOnTimeRatio() < 0.955 ||
+      (sla && (sla.regime === "FORTRESS" || sla.projectedEowOT < 0.948 || sla.backlogPerDriver > 0.14))
+    ) {
+      return { safe: false, maxCars: 2, quoteSynergySafe: false }
+    }
+    const cappedCars = Math.min(3, base.maxCars) as 2 | 3
+    return { ...base, maxCars: cappedCars }
+  }
+
   private countUnbookedInTown(placeId: string): number {
     let count = 0
     for (const o of this.orders.values()) {
@@ -3381,15 +3466,10 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
         ? sla.chainableBaseQuoteFactor
         : 1.0
       this.pricer.config.baseQuoteMultiplier = Math.max(
-        1.26,
+        1.28,
         Math.min(2.2, origBaseQuote * harvestChainFactor * shadowOutageFactor * sla.quoteMultiplierFactor),
       )
-      this.pricer.config.minExpectedMarginRatio =
-        sla.regime === "FORTRESS"
-          ? Math.max(0.21, origMinMargin)
-          : sla.regime === "HARVEST"
-            ? Math.min(origMinMargin, 0.185)
-            : origMinMargin
+      this.pricer.config.minExpectedMarginRatio = Math.max(0.2, origMinMargin)
       decision = this.pricer.evaluateQuote(request, pricingCtx)
     } finally {
       this.pricer.config.maxActiveWaitingPerDriver = origWait
@@ -3518,12 +3598,9 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
       if (sla.regime === "FORTRESS") {
         schedCfg.baseFeeMultiplier = Math.max(origBaseFee, 1.08)
         schedCfg.maxNormalFeeMultiplier = Math.max(origMaxNorm, 1.40)
-      } else if (this.pricer.config.slaRegimeControl && sla.projectedEowOT < 0.94) {
-        schedCfg.baseFeeMultiplier = Math.max(origBaseFee, 1.05)
-        schedCfg.maxNormalFeeMultiplier = Math.max(origMaxNorm, 1.36)
-      } else if (isHighSlackFlexible || (this.pricer.config.slaRegimeControl && sla.projectedEowOT >= 0.94 && !isUrgent)) {
-        schedCfg.baseFeeMultiplier = Math.min(origBaseFee, 1.00)
-        schedCfg.maxNormalFeeMultiplier = Math.min(origMaxNorm, 1.30)
+      } else if (isHighSlackFlexible && pickupDrivers >= 6 && sla.regime === "HARVEST") {
+        schedCfg.baseFeeMultiplier = Math.min(origBaseFee, 1.01)
+        schedCfg.maxNormalFeeMultiplier = Math.min(origMaxNorm, 1.33)
       }
       schedule = this.feeScheduler.buildSchedule({
         now: this.now,
@@ -3773,6 +3850,12 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
   /** Reconstruct pricer beliefs and pending requests during live --final reconnect. */
   override async rejoin(snapshot: DeskSnapshot, history: DeskEvent[]): Promise<void> {
     await super.rejoin(snapshot, history)
+    let firstWonAt = Infinity
+    for (const ev of history) {
+      if (ev.kind === "order_won" && ev.at < firstWonAt) {
+        firstWonAt = ev.at
+      }
+    }
     for (const ev of history) {
       if (ev.kind === "price_request") {
         this.requests.set(ev.request.id, ev.request)
@@ -3780,6 +3863,11 @@ export class Top10IntegratedDesk extends Top10ChainingDesk {
         const req = this.requests.get(ev.order.id)
         if (req) {
           this.pricer.observeHistoricalWin(req, ev.order)
+        }
+      } else if (ev.kind === "order_lost" && ev.at >= firstWonAt) {
+        const req = this.requests.get(ev.requestId)
+        if (req) {
+          this.pricer.observeHistoricalLoss(req)
         }
       } else if (ev.kind === "ledger") {
         const { kind, orderId } = ev.line
@@ -3847,7 +3935,7 @@ export function getTop10DeskOptions(strategy: StrategyConfig): IntegratedDeskOpt
       cleanAdverseGuard: anyStrat.cleanAdverseGuard ?? true,
       smartDirectOffers: anyStrat.smartDirectOffers ?? false,
       slaRegimeControl: anyStrat.slaRegimeControl ?? true,
-      dealerShadowPricing: anyStrat.dealerShadowPricing ?? true,
+      dealerShadowPricing: anyStrat.dealerShadowPricing ?? false,
       fortressRescueEnabled: anyStrat.fortressRescueEnabled ?? false,
       smartDirectOffersV2: anyStrat.smartDirectOffersV2 ?? true,
       ...(anyStrat.pricerOptions ?? {}),

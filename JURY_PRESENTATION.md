@@ -65,6 +65,9 @@ Use the built-in Presentation Studio on port `3001` to export both hackathon sub
 | `F4` | `chain=true` (5-car bundling, `<=45m` gap, `<=720m` drive) | `€37,155.29` | `93.76%` | `90.18%` | `69.31%` | Lifted `spread-1` (`€10,124.90`) & `spread-2` (`€8,280.30`), but pinched `spread-5` (`90.18%`, `27` late) |
 | `F2` | `F1` minus `cleanAdverseGuard`, Day >= 3 `HARVEST` | `€37,042.01` | `95.64%` | `94.53%` | `68.98%` | `cleanAdverseGuard` proved worth `+€392` (`F1` vs `F2`) and `+€1,045` in `F3` |
 | `F6` | `chain=true`, `1.24/1.25` floor, `FORTRESS` `0.929` | `€36,895.26` | `94.64%` | `91.85%` | `69.02%` | Chaining still dragged scarce `spread-5` (`€5,255.31`, `47` drops), confirming `chain=false` (`F3`) for live play |
+| `V24c` *(Rejected)* | `chain=false`, `maxWait=0.43`, `twr=0.33`, Day 3+ `HARVEST` `0.45`/`0.99x` | `€37,388.35` | `95.08%` | `91.47%` | `71.05%` | Rejected by 5-seed gate (`spread-5` dropped to `91.47%`, `-€698` vs `v23`) |
+| `V24b` *(Rejected)* | `chain=true` (`2-3` cars, Mon–Wed), `dealerShadowPricing=true`, `fee=1.03/1.34`, `wait=0.43` | `€35,910.18` | `94.43%` | `92.57%` | `71.90%` | Rejected (`spread-4` fell `-€1,876` vs `v23`; lower fees delayed bookings into urgent tiers) |
+| `V24` *(Rejected)* | `chain=true` (`2-3` cars), `dealerShadowPricing=true`, `fee=1.00/1.30`, `wait=0.46`, Day 2 `HARVEST` `0.965x` | `€35,381.38` | `94.32%` | `91.35%` | `72.53%` | Rejected (`1.00` opening fees + `0.48` cap raised `fee/rev` & dropped `spread-3` to `€1,723.57 @ 91.35%`) |
 
 ---
 

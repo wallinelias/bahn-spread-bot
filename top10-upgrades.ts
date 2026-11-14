@@ -650,19 +650,19 @@ export function evaluateIntraWeekSlaRegime(params: {
   let regime: SlaRegime = "BALANCED"
   if (
     totalCommittedOrders >= 30 &&
-    (projectedEowOT < 0.925 ||
-      liveOT < 0.925 ||
-      (severeTownBacklogSpike && projectedEowOT < 0.932))
+    (projectedEowOT < 0.929 ||
+      liveOT < 0.928 ||
+      (severeTownBacklogSpike && projectedEowOT < 0.936))
   ) {
     regime = "FORTRESS"
   } else if (
-    day >= 2 &&
-    totalCommittedOrders >= 65 &&
-    projectedEowOT >= 0.942 &&
-    liveOT >= 0.945 &&
-    backlogPerDriver <= 0.2 &&
-    urgentRatio <= 0.035 &&
-    !(day === 4 && tod >= 15 * HOUR_MIN && liveOT < 0.96)
+    day >= 3 &&
+    totalCommittedOrders >= 90 &&
+    projectedEowOT >= 0.965 &&
+    liveOT >= 0.962 &&
+    backlogPerDriver <= 0.14 &&
+    urgentRatio <= 0.025 &&
+    !(day === 4 && tod >= 11 * HOUR_MIN)
   ) {
     regime = "HARVEST"
   }
@@ -678,7 +678,7 @@ export function evaluateIntraWeekSlaRegime(params: {
       unbookedCount,
       backlogPerDriver,
       effectiveMaxWaitingPerDriver: Math.min(baseMaxWaitingPerDriver, 0.28),
-      quoteMultiplierFactor: 1.08,
+      quoteMultiplierFactor: 1.07,
       targetWinRateDelta: -0.04,
       chainableBaseQuoteFactor: 1.04,
       atRiskUnbookedOrderIds,
@@ -695,10 +695,10 @@ export function evaluateIntraWeekSlaRegime(params: {
       atRiskCount,
       unbookedCount,
       backlogPerDriver,
-      effectiveMaxWaitingPerDriver: Math.max(baseMaxWaitingPerDriver, 0.48),
-      quoteMultiplierFactor: liveOT >= 0.958 ? 0.965 : 0.98,
-      targetWinRateDelta: 0.04,
-      chainableBaseQuoteFactor: 0.975,
+      effectiveMaxWaitingPerDriver: Math.max(baseMaxWaitingPerDriver, 0.43),
+      quoteMultiplierFactor: 1.0,
+      targetWinRateDelta: 0.015,
+      chainableBaseQuoteFactor: 0.99,
       atRiskUnbookedOrderIds,
     }
   }

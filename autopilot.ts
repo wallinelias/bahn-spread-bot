@@ -190,8 +190,11 @@ async function main(): Promise<void> {
     }
 
     cycle++
-    // Pause 45 seconds between cycles so rate-limit buckets stay full
-    await sleep(45_000)
+    // Check for an upcoming/live Final every 10 seconds during the 40-second cooldown between practice cycles
+    for (let w = 0; w < 4; w++) {
+      await sleep(10_000)
+      await checkAndPlayFinal(client)
+    }
   }
 }
 

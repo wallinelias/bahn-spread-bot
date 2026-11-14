@@ -1423,8 +1423,13 @@ export class QuantitativeDesk {
   }
 
   async send(): Promise<void> {
+    if (this.outbox.length === 0) return
     const actions = this.outbox.splice(0)
-    if (actions.length > 0) this.readResults(actions, await this.world.act(actions))
+    // Prioritize time-sensitive quote responses ahead of offers/fee updates so the 20/s --final bucket never delays a quote past respondBy.
+    if (actions.length > 1) {
+      actions.sort((a, b) => (a.type === "quote" ? 0 : 1) - (b.type === "quote" ? 0 : 1))
+    }
+    this.readResults(actions, await this.world.act(actions))
   }
 
   readResults(actions: Action[], results: ActionResult[]): void {
@@ -1550,7 +1555,7 @@ export async function runSimulationRound(options: RunSimulationOptions = {}): Pr
         if (snapshot.now < snapshot.endsAt) {
           await desk.rejoin(snapshot, history)
           await desk.send()
-          for await (const event of world.stream({ after: history.at(-1)?.seq ?? -1, idleMs: 1000 })) {
+          for await (const event of world.stream({ after: history.at(-1)?.seq ?? -1, idleMs: 2000 })) {
             const day = Math.floor(desk.now / DAY)
             desk.now = event === null ? (await world.client.final()).now : Math.max(desk.now, event.at)
             if (event !== null) await desk.handle(event)
